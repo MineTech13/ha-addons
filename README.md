@@ -13,7 +13,7 @@ https://github.com/MineTech13/ha-addons
 | App | What it does | Wraps (upstream) |
 | --- | --- | --- |
 | [Spoolman (Ingress + Direct API)](spoolman-hybrid/README.md) | Spoolman with HA Ingress for remote use plus a direct API port (OctoEverywhere, Moonraker, ...) | [Donkie/Spoolman](https://github.com/Donkie/Spoolman) |
-| [ACE Lane Bridge](ace-lane-bridge/README.md) | Books filament usage per ACE slot into Spoolman via Moonraker (experimental) | [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) |
+| [ACE Lane Bridge](ace-lane-bridge/README.md) (experimental) | Books filament usage per ACE slot into Spoolman via Moonraker (experimental) | [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) |
 
 All apps are thin wrappers around the upstream container images, pulled straight from the upstream projects' own registries. This repository is not affiliated with the upstream projects.
 

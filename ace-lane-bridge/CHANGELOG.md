@@ -22,3 +22,6 @@
 
 ## 2.8.1-2
 - New option `RUN_SPOOLMAN_SETUP`: runs upstream's Spoolman setup script (extra fields and template filaments) on start. It only adds, never changes or deletes, and is safe to run repeatedly. Turn it off again after the first run.
+
+## 2.8.1-3
+- Flag the add-on as `stage: experimental` so Home Assistant shows the experimental badge.
