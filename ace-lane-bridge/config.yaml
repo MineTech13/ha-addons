@@ -1,0 +1,43 @@
+name: ACE Lane Bridge (Spoolman)
+version: "2.8.1-2"
+slug: ace_lane_bridge
+description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (Rinkhals). Community project xNoVoSx/kobra-spoolman."
+arch:
+  - amd64
+  - aarch64
+startup: services
+init: false
+map:
+  - data:rw
+ingress: true
+ingress_port: 7913
+panel_icon: mdi:printer-3d-nozzle
+panel_title: ACE Lanes
+ports:
+  7913/tcp: 7913
+ports_description:
+  7913/tcp: "Direct access port (web UI, Android app, OrcaSlicer plugin). Clear the host port to disable."
+options:
+  MOONRAKER_URL: "http://192.168.1.50:7125"
+  SPOOLMAN_URL: "http://192.168.1.10:7912"
+  DRY_RUN: true
+  BOOK_USAGE: true
+  AUTO_UNASSIGN_ON_EMPTY: false
+  SET_ACE_SLOT_INFO: true
+  RUN_SPOOLMAN_SETUP: false
+  LOG_LEVEL: "INFO"
+schema:
+  MOONRAKER_URL: str
+  SPOOLMAN_URL: str
+  MOONRAKER_API_KEY: str?
+  SPOOLMAN_PUBLIC_URL: str?
+  PRINTER_UI_URL: str?
+  DRY_RUN: bool
+  BOOK_USAGE: bool
+  AUTO_UNASSIGN_ON_EMPTY: bool
+  SET_ACE_SLOT_INFO: bool
+  RUN_SPOOLMAN_SETUP: bool
+  LOG_LEVEL: list(DEBUG|INFO|WARNING|ERROR)
+homeassistant_api: false
+hassio_api: false
+privileged: []

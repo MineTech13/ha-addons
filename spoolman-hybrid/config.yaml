@@ -1,0 +1,42 @@
+name: Spoolman (Ingress + Direct API)
+version: "0.27.0-0"
+slug: spoolman_hybrid
+description: "Spoolman with HA Ingress for remote management and a direct port for API access (e.g. OctoEverywhere)."
+arch:
+  - amd64
+  - aarch64
+startup: services
+init: false
+map:
+  - app_config:rw
+  - data:rw
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:printer-3d-nozzle
+panel_title: Spoolman
+ports:
+  7912/tcp: 7912
+ports_description:
+  7912/tcp: "Direct access port (API for OctoEverywhere, Moonraker, etc.). Clear the host port to disable."
+environment:
+  SPOOLMAN_HOST: "0.0.0.0"
+  SPOOLMAN_PORT: "7913"
+  SPOOLMAN_DIR_DATA: "/config"
+  SPOOLMAN_DIR_BACKUPS: "/config/backups"
+  SPOOLMAN_DIR_LOGS: "/config/logs"
+  SPOOLMAN_DIR_CACHE: "/config/cache"
+options:
+  SPOOLMAN_DEBUG_MODE: false
+  SPOOLMAN_LEGACY_CLIENT: false
+  SPOOLMAN_CORS_ORIGIN: ""
+  ACCESS_MODE: both
+  DIRECT_API_ONLY: true
+schema:
+  SPOOLMAN_DEBUG_MODE: bool
+  SPOOLMAN_LEGACY_CLIENT: bool
+  SPOOLMAN_CORS_ORIGIN: str?
+  ACCESS_MODE: list(both|ingress|direct)
+  DIRECT_API_ONLY: bool
+homeassistant_api: false
+hassio_api: true
+privileged: []

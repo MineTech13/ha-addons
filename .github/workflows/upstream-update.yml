@@ -1,0 +1,76 @@
+name: Upstream update
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: upstream-update
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ steps.list.outputs.addons }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        run: |
+          addons="$(grep -v '^#' scripts/upstreams.tsv | cut -f1 | jq -R . | jq -sc .)"
+          echo "addons=$addons" >> "$GITHUB_OUTPUT"
+
+  update:
+    needs: matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1   # sequential: each job pushes to main
+      matrix:
+        addon: ${{ fromJSON(needs.matrix.outputs.addons) }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump to latest upstream release
+        id: bump
+        run: scripts/bump-upstream.sh "${{ matrix.addon }}" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Build and smoke test
+        id: test
+        if: steps.bump.outputs.changed == 'true'
+        continue-on-error: true
+        run: scripts/smoke-test.sh "${{ matrix.addon }}"
+
+      - name: Commit
+        if: steps.bump.outputs.changed == 'true'
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ver="${{ steps.bump.outputs.version }}"
+          git checkout -b "update/${{ matrix.addon }}-$ver"
+          git add "${{ matrix.addon }}"
+          git commit -m "Update ${{ matrix.addon }} to $ver"
+
+      - name: Tests passed - merge to main
+        if: steps.bump.outputs.changed == 'true' && steps.test.outcome == 'success'
+        run: |
+          git fetch origin main
+          git rebase origin/main
+          git push origin "HEAD:main"
+
+      - name: Tests failed - open PR for review
+        if: steps.bump.outputs.changed == 'true' && steps.test.outcome != 'success'
+        run: |
+          ver="${{ steps.bump.outputs.version }}"
+          git push -f origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
+          gh pr create --base main --head "update/${{ matrix.addon }}-$ver" \
+            --title "Update ${{ matrix.addon }} to $ver (build/smoke test failed)" \
+            --body "Automatic upstream update. The build or smoke test failed, so this was not merged. See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Upstream probably changed something the add-on's run.sh relies on." \
+            || echo "PR already exists"
+          exit 1

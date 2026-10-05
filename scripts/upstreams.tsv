@@ -1,0 +1,3 @@
+# add-on dir	upstream GitHub repo	upstream container image (tag = release without leading v)
+spoolman-hybrid	Donkie/Spoolman	ghcr.io/donkie/spoolman
+ace-lane-bridge	xNoVoSx/kobra-spoolman	ghcr.io/xnovosx/ace-lane-bridge
