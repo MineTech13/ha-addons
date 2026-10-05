@@ -9,7 +9,6 @@ startup: services
 init: false
 map:
   - addon_config:rw
-  - data:rw
 ingress: true
 panel_icon: mdi:printer-3d-nozzle
 panel_title: Spoolman
