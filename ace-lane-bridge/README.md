@@ -49,3 +49,7 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 Writes need a paired device. Pairing is per browser/app: on first start the add-on log prints a setup code, enter it in the web UI (ingress and direct are separate browser origins, so pair each once). There is no TLS, keep the port inside your home network.
 
 Full upstream settings: [docs/configuration.md](https://github.com/xNoVoSx/kobra-spoolman/blob/main/docs/configuration.md).
+
+## Storage
+
+All state (paired devices, settings, dryer rules, moisture and print history, journal) is kept in the add-on config folder, visible as `/addon_configs/<slug>/` (Samba, File editor) and included in backups. Versions before 2.8.1-4 used the hidden `/data` folder; its content is copied over once on the first start of the new version (marker file `.migrated-from-data`).

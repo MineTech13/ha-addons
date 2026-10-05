@@ -25,3 +25,6 @@
 
 ## 2.8.1-3
 - Flag the add-on as `stage: experimental` so Home Assistant shows the experimental badge.
+
+## 2.8.1-4
+- State now lives in the add-on config folder (`/addon_configs/<slug>/`, browsable via Samba/File editor) instead of the hidden `/data`. Existing state in `/data` is copied over once on first start.

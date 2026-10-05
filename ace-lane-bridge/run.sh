@@ -16,7 +16,17 @@ for k, v in opts.items():
     print("export %s=%s" % (k, shlex.quote(v)))
 ')"
 
-export DATA_DIR=/data
+# State lives in the add-on config folder (visible as /addon_configs/<slug>/).
+# Older versions kept it in the hidden /data folder: copy it over once.
+export DATA_DIR=/config
+mkdir -p "$DATA_DIR"
+if [ ! -e "$DATA_DIR/.migrated-from-data" ]; then
+    if [ -z "$(ls -A "$DATA_DIR")" ] && [ -n "$(find /data -mindepth 1 -maxdepth 1 ! -name options.json -print -quit)" ]; then
+        echo "[INFO] Migrating existing state from /data to $DATA_DIR..."
+        find /data -mindepth 1 -maxdepth 1 ! -name options.json -exec cp -a {} "$DATA_DIR"/ \;
+    fi
+    touch "$DATA_DIR/.migrated-from-data"
+fi
 export HTTP_HOST=0.0.0.0
 export HTTP_PORT=7913
 [ -n "$TZ" ] || export TZ=UTC
