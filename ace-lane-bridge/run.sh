@@ -67,5 +67,8 @@ while IFS= read -r -d '' f; do
 done < <(find /app -path '*static*' -type f \( -name '*.html' -o -name '*.js' \) -print0 2>/dev/null)
 [ "$PATCHED" = "1" ] || echo "[WARN] Could not patch the web UI - the ingress page may not work"
 
+# Optional UI patches (camera under ingress, copyable camera links); never fatal
+python /patch-ui.py || echo "[WARN] UI patch script failed, continuing"
+
 cd /app
 exec python -m acebridge

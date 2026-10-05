@@ -10,7 +10,7 @@ USER root
 # Upstream's Spoolman setup script (extra fields + template filaments), pinned to the same tag
 ADD https://raw.githubusercontent.com/xNoVoSx/kobra-spoolman/v${UPSTREAM_VERSION}/spoolman/spoolman_setup.py /opt/spoolman_setup.py
 
-COPY run.sh /run.sh
+COPY run.sh patch-ui.py /
 RUN chmod +x /run.sh
 
 ENTRYPOINT ["/run.sh"]

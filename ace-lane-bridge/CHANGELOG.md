@@ -37,3 +37,7 @@
 
 ## 2.21.1-0
 - Upstream update to 2.21.1 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v2.21.1)).
+
+## 2.21.1-1
+- Camera under ingress: load single snapshots one after the other instead of the endless MJPEG stream, which did not arrive through the ingress/proxy chain (image stayed empty). Option `INGRESS_CAMERA_SNAPSHOTS` (default on); direct port 7913 still streams MJPEG.
+- Copyable camera links on the settings page no longer contain the ingress path (needs a HA login); they use `http://<host>:7913` or the new option `BRIDGE_PUBLIC_URL`.

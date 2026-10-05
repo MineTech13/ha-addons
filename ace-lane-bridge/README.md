@@ -36,6 +36,8 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `DRY_RUN` | Log only, write nothing |
 | `BOOK_USAGE` | Book consumption into Spoolman |
 | `AUTO_UNASSIGN_ON_EMPTY` | Move a spool to the shelf when its slot reports empty. Default off: spools were unassigned whenever the printer lost power |
+| `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single snapshots (a few fps) instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG |
+| `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
 | `SET_ACE_SLOT_INFO` | Push material/colour to the ACE for slots without RFID tag (Rinkhals `MMU_GATE_MAP`) |
 | `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page |
@@ -53,3 +55,9 @@ Full upstream settings: [docs/configuration.md](https://github.com/xNoVoSx/kobra
 ## Storage
 
 All state (paired devices, settings, dryer rules, moisture and print history, journal) is kept in the add-on config folder, visible as `/addon_configs/<slug>/` (Samba, File editor) and included in backups. Versions before 2.8.1-4 used the hidden `/data` folder; its content is copied over once on the first start of the new version (marker file `.migrated-from-data`).
+
+## Camera
+
+- For Mainsail/OrcaSlicer etc. use the links from the bridge's settings page: they point at the direct port (`:7913`) and carry the camera key, so they work without a HA login.
+- Camera in the HA sidebar (ingress) uses snapshots, see `INGRESS_CAMERA_SNAPSHOTS`. For a smooth stream open the direct port `http://<HA-IP>:7913` instead.
+- Rotate the camera key in the bridge (Settings → Camera) if a link was shared by accident.
