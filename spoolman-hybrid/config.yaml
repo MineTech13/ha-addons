@@ -1,5 +1,5 @@
 name: Spoolman (Ingress + Direct API)
-version: "0.27.0-0"
+version: "0.27.0-1"
 slug: spoolman_hybrid
 description: "Spoolman with HA Ingress for remote management and a direct port for API access (e.g. OctoEverywhere)."
 arch:
@@ -8,10 +8,9 @@ arch:
 startup: services
 init: false
 map:
-  - app_config:rw
+  - addon_config:rw
   - data:rw
 ingress: true
-ingress_port: 8099
 panel_icon: mdi:printer-3d-nozzle
 panel_title: Spoolman
 ports:
@@ -37,6 +36,5 @@ schema:
   SPOOLMAN_CORS_ORIGIN: str?
   ACCESS_MODE: list(both|ingress|direct)
   DIRECT_API_ONLY: bool
-homeassistant_api: false
 hassio_api: true
 privileged: []

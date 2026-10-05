@@ -58,13 +58,13 @@ fi
 # Make API calls relative so the UI works under the HA ingress path
 # (2.5.0 had one inline index.html; 2.6+ has js/api.js - both contain fetch(path, ...))
 PATCHED=0
-for f in $(find /app -path '*static*' -type f \( -name '*.html' -o -name '*.js' \) 2>/dev/null); do
+while IFS= read -r -d '' f; do
     if grep -qE 'fetch\(path, ' "$f"; then
         sed -i -E 's#fetch\(path, #fetch(path.replace(/^[/]/, ""), #; s#href="/api/#href="api/#g' "$f"
         echo "[INFO] Patched web UI for ingress: $f"
         PATCHED=1
     fi
-done
+done < <(find /app -path '*static*' -type f \( -name '*.html' -o -name '*.js' \) -print0 2>/dev/null)
 [ "$PATCHED" = "1" ] || echo "[WARN] Could not patch the web UI - the ingress page may not work"
 
 cd /app

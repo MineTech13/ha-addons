@@ -23,7 +23,10 @@ current="$(sed -n 's/^ARG UPSTREAM_VERSION=//p' "$DOCKERFILE")"
 latest="$(gh api "repos/$REPO/releases?per_page=30" \
     --jq '[.[] | select(.draft == false and .prerelease == false)][0].tag_name')"
 latest="${latest#v}"
-[ -n "$latest" ] && [ "$latest" != "null" ] || { echo "could not read latest release of $REPO" >&2; exit 1; }
+if [ -z "$latest" ] || [ "$latest" = "null" ]; then
+    echo "could not read latest release of $REPO" >&2
+    exit 1
+fi
 
 newest="$(printf '%s\n%s\n' "$current" "$latest" | sort -V | tail -1)"
 if [ "$latest" = "$current" ] || [ "$newest" != "$latest" ]; then

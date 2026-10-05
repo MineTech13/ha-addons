@@ -16,7 +16,8 @@ print(str(v).lower() if isinstance(v, bool) else v)
 ' "$1" "$2"
 }
 
-export SPOOLMAN_DEBUG_MODE="$(opt SPOOLMAN_DEBUG_MODE false)"
+SPOOLMAN_DEBUG_MODE="$(opt SPOOLMAN_DEBUG_MODE false)"
+export SPOOLMAN_DEBUG_MODE
 echo "[INFO] Debug mode: ${SPOOLMAN_DEBUG_MODE}"
 
 if [ "$(opt SPOOLMAN_LEGACY_CLIENT false)" = "true" ]; then
