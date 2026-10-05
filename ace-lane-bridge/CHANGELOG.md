@@ -28,3 +28,6 @@
 
 ## 2.8.1-4
 - State now lives in the add-on config folder (`/addon_configs/<slug>/`, browsable via Samba/File editor) instead of the hidden `/data`. Existing state in `/data` is copied over once on first start.
+
+## 2.21.0-0
+- Upstream update to 2.21.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v2.21.0)).
