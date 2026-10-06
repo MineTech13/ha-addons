@@ -1,5 +1,5 @@
 name: ACE Lane Bridge (Spoolman)
-version: "2.21.1-2"
+version: "2.21.1-3"
 slug: ace_lane_bridge
 stage: experimental
 description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (Rinkhals). Community project xNoVoSx/kobra-spoolman."
@@ -9,7 +9,7 @@ arch:
 startup: services
 init: false
 map:
-  - addon_config:rw
+  - app_config:rw
 ingress: true
 ingress_port: 7913
 panel_icon: mdi:printer-3d-nozzle
