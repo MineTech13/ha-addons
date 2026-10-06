@@ -1,5 +1,5 @@
 name: ACE Lane Bridge (Spoolman)
-version: "2.21.1-1"
+version: "2.21.1-2"
 slug: ace_lane_bridge
 stage: experimental
 description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (Rinkhals). Community project xNoVoSx/kobra-spoolman."
@@ -22,9 +22,6 @@ options:
   MOONRAKER_URL: "http://192.168.1.50:7125"
   SPOOLMAN_URL: "http://192.168.1.10:7912"
   DRY_RUN: true
-  BOOK_USAGE: true
-  AUTO_UNASSIGN_ON_EMPTY: false
-  SET_ACE_SLOT_INFO: true
   RUN_SPOOLMAN_SETUP: false
   INGRESS_CAMERA_SNAPSHOTS: true
   LOG_LEVEL: "INFO"
@@ -35,9 +32,6 @@ schema:
   SPOOLMAN_PUBLIC_URL: str?
   PRINTER_UI_URL: str?
   DRY_RUN: bool
-  BOOK_USAGE: bool
-  AUTO_UNASSIGN_ON_EMPTY: bool
-  SET_ACE_SLOT_INFO: bool
   RUN_SPOOLMAN_SETUP: bool
   INGRESS_CAMERA_SNAPSHOTS: bool
   BRIDGE_PUBLIC_URL: str?

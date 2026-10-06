@@ -34,14 +34,13 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `SPOOLMAN_URL` | Spoolman API, e.g. the direct port of the Spoolman add-on |
 | `MOONRAKER_API_KEY` | Only if Moonraker requires one |
 | `DRY_RUN` | Log only, write nothing |
-| `BOOK_USAGE` | Book consumption into Spoolman |
-| `AUTO_UNASSIGN_ON_EMPTY` | Move a spool to the shelf when its slot reports empty. Default off: spools were unassigned whenever the printer lost power |
 | `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single snapshots (a few fps) instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG |
 | `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
-| `SET_ACE_SLOT_INFO` | Push material/colour to the ACE for slots without RFID tag (Rinkhals `MMU_GATE_MAP`) |
 | `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page |
 | `LOG_LEVEL` | `DEBUG` for more detail |
+
+Runtime settings (usage booking, auto-unassign on empty, ACE slot info, camera, print preview, moisture, notices and more) are changed in the bridge's web UI under Settings, not here. Upstream only uses the matching environment variables as start values; a value saved in the UI wins from then on.
 
 ## Access
 
