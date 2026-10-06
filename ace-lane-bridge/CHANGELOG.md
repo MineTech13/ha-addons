@@ -44,3 +44,6 @@
 
 ## 2.21.1-2
 - Removed the options `BOOK_USAGE`, `AUTO_UNASSIGN_ON_EMPTY` and `SET_ACE_SLOT_INFO`: upstream moved them into the web UI (Settings), where a saved value overrides the environment, so the add-on options had no effect after the first change there. Existing UI settings are kept; set these in the web UI from now on.
+
+## 2.21.1-3
+- Use the `app_config` map name (the `addon_config` name is deprecated in current Home Assistant). Requires a recent Home Assistant; state location (`/addon_configs/<slug>/`) is unchanged.
