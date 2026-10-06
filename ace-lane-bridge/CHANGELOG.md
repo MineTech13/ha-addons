@@ -34,3 +34,6 @@
 
 ## 2.21.0-1
 - Use `addon_config` map name (accepted by old and new Home Assistant); drop options that only restate defaults.
+
+## 2.21.1-0
+- Upstream update to 2.21.1 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v2.21.1)).

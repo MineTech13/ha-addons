@@ -1,5 +1,5 @@
 name: ACE Lane Bridge (Spoolman)
-version: "2.21.0-1"
+version: "2.21.1-0"
 slug: ace_lane_bridge
 stage: experimental
 description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (Rinkhals). Community project xNoVoSx/kobra-spoolman."
