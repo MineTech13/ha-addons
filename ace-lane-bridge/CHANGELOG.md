@@ -47,3 +47,6 @@
 
 ## 2.21.1-3
 - Use the `app_config` map name (the `addon_config` name is deprecated in current Home Assistant). Requires a recent Home Assistant; state location (`/addon_configs/<slug>/`) is unchanged.
+
+## 3.6.0-0
+- Upstream update to 3.6.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.6.0)).
