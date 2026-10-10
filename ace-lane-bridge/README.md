@@ -6,6 +6,8 @@ Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/
 - Measures filament use per slot and books it to the right spool in Spoolman
 - Writes `lane_data` to Moonraker for Mainsail/Fluidd/OrcaSlicer
 
+> **Version line:** this add-on stays on upstream **2.x** (stock firmware + Rinkhals). Upstream 3.x needs Klipper with the ACEPRO driver on a Raspberry Pi and does not see the ACE on Rinkhals, so automatic updates are limited to 2.x.
+
 > The upstream project targets the **Kobra S1 + ACE 2 Pro**. A **Kobra 3 + ACE Pro** is untested. Start with `DRY_RUN: true`, which logs what would be booked and writes nothing, and compare with a real print before turning it off.
 
 ## Setup

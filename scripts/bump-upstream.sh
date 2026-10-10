@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 ADDON="${1:?usage: $0 <addon-dir>}"
 
 # add-on dir -> upstream repo + image, from scripts/upstreams.tsv
-IFS=$'\t' read -r _ REPO IMAGE < <(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="$ADDON" '$1 == a') \
+IFS=$'\t' read -r _ REPO IMAGE MAX_MAJOR < <(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="$ADDON" '$1 == a') \
     || { echo "$ADDON is not listed in scripts/upstreams.tsv" >&2; exit 2; }
 [ -n "${REPO:-}" ] || { echo "$ADDON is not listed in scripts/upstreams.tsv" >&2; exit 2; }
 
@@ -19,9 +19,11 @@ CHANGELOG="$ADDON/CHANGELOG.md"
 current="$(sed -n 's/^ARG UPSTREAM_VERSION=//p' "$DOCKERFILE")"
 [ -n "$current" ] || { echo "no ARG UPSTREAM_VERSION in $DOCKERFILE" >&2; exit 1; }
 
-# Newest non-draft, non-prerelease release (gh already sorts newest first)
-latest="$(gh api "repos/$REPO/releases?per_page=30" \
-    --jq '[.[] | select(.draft == false and .prerelease == false)][0].tag_name')"
+# Newest non-draft, non-prerelease release (gh already sorts newest first),
+# limited to major version <= MAX_MAJOR when the add-on pins one (breaking upstream majors)
+latest="$(gh api "repos/$REPO/releases?per_page=30" | jq -r --arg max "${MAX_MAJOR:-}" \
+    '[.[] | select(.draft == false and .prerelease == false)
+          | select($max == "" or ((.tag_name | ltrimstr("v") | split(".")[0] | tonumber) <= ($max | tonumber)))][0].tag_name')"
 latest="${latest#v}"
 if [ -z "$latest" ] || [ "$latest" = "null" ]; then
     echo "could not read latest release of $REPO" >&2
