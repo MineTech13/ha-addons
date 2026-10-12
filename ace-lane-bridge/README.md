@@ -15,14 +15,21 @@ Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/
 ## Setup
 
 1. Install the **Spoolman (Ingress + Direct API)** add-on (mode `both`, the default; `ingress` mode closes the direct port the bridge needs).
-2. Set the options here:
-   - `MOONRAKER_URL`: `http://<printer-ip>:7125`
-   - `SPOOLMAN_URL`: `http://<HA-IP>:7912`
+2. Set `MOONRAKER_URL` here: `http://<printer-ip>:7125`. Leave `SPOOLMAN_URL` empty: the bridge finds the Spoolman add-on on its own (see [Finding the other add-ons](#finding-the-other-add-ons)).
 3. Start the add-on and open **ACE Lanes** in the sidebar.
 4. Assign a spool to each ACE slot.
 5. Do a test print with `DRY_RUN: true` and read the add-on log. When the numbers look right, set `DRY_RUN: false`.
 
 Do not also enable Moonraker's own `[spoolman]` booking for the same prints, or usage is counted twice.
+
+## Finding the other add-ons
+
+When `SPOOLMAN_URL` or `VISION_URL` is empty, the bridge looks on every start for the **Spoolman (Ingress + Direct API)** and **[Kobra Vision](../kobra-vision/README.md)** add-ons from this repository and uses them over Home Assistant's internal network (`http://<hostname>:7912` and `http://<hostname>:7917`). The add-on log shows what it found (`Autodetect: ...`). An address you set in the options always wins, so a Spoolman or Kobra Vision running somewhere else still works.
+
+- Spoolman must run in access mode `both` or `direct`; `ingress` closes the port the bridge uses.
+- With a detected Spoolman the web page shows no "open in Spoolman" links, because the internal hostname does not work in a browser. Set `SPOOLMAN_PUBLIC_URL` (e.g. your Spoolman ingress or `http://<HA-IP>:7912` address) for the links.
+- A `VISION_TOKEN` is not copied over (other add-ons' options are not readable); set it in both add-ons if you use one.
+- Uninstalling Kobra Vision turns the AI off again on the next start of the bridge.
 
 ## Spoolman setup script (optional)
 
@@ -35,12 +42,12 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | Option | Meaning |
 | --- | --- |
 | `MOONRAKER_URL` | Moonraker on the printer |
-| `SPOOLMAN_URL` | Spoolman API, e.g. the direct port of the Spoolman add-on |
+| `SPOOLMAN_URL` | Spoolman API. Empty = the Spoolman add-on from this repository, if installed. Set it for a Spoolman elsewhere, e.g. `http://<IP>:7912` |
 | `MOONRAKER_API_KEY` | Only if Moonraker requires one |
 | `DRY_RUN` | Log only, write nothing |
 | `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single snapshots (a few fps) instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG |
 | `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
-| `VISION_URL` | AI print-failure detection: address of the [Kobra Vision](../kobra-vision/README.md) add-on, e.g. `http://<hostname>:7917` (hostname from that add-on's Info page). Empty = AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
+| `VISION_URL` | AI print-failure detection: address of [Kobra Vision](../kobra-vision/README.md). Empty = the Kobra Vision add-on if installed, otherwise AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
 | `VISION_TOKEN` | Only if `VISION_TOKEN` is also set in the Kobra Vision add-on |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
 | `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page |

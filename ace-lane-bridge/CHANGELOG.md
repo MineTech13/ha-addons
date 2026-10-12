@@ -70,3 +70,6 @@
 
 ## 3.12.0-2
 - New optional options for the upstream settings that have no place in the bridge's web UI: MQTT / Home Assistant (`MQTT_HOST`, `MQTT_PORT`, `MQTT_USER`, `MQTT_PASSWORD`, `MQTT_PREFIX`, `MQTT_DISCOVERY`, `ROOM_SENSOR_TOPIC`), camera addresses (`CAMERA_SNAPSHOT_URL`, `CAMERA_STREAM_URL`, `CAMERA_INTERVAL_S`), Spoolman names (`SLOT_LOCATION_PREFIX`, `SHELF_LOCATION`, `TEMPLATE_VENDOR`), `SPOOLMAN_POLL_S`, `LANE_NAMESPACE`, `EMPTY_GATE_MODE`, `GATE_DEBOUNCE_S`, `USAGE_TOLERANCE`, `DEFAULT_DIAMETER`, `DEFAULT_DENSITY` and the NFC tag numbering (`TAG_SKU_PREFIX`, `TAG_NR_MIN`, `TAG_NR_MAX`). All empty by default, so nothing changes unless you set them.
+
+## 3.12.0-3
+- `SPOOLMAN_URL` and `VISION_URL` are found on their own: when empty, the bridge uses the Spoolman (Ingress + Direct API) and Kobra Vision add-ons from this repository if they are installed (looked up through the Supervisor API, info calls only). An address set in the options still wins. `SPOOLMAN_URL` is now optional; the old example `http://192.168.1.10:7912` is treated as empty.
