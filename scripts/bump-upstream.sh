@@ -39,7 +39,8 @@ if [ "$latest" = "$current" ] || [ "$newest" != "$latest" ]; then
 fi
 
 # The image must actually be published before we point at it
-if ! docker manifest inspect "$IMAGE:$latest" >/dev/null 2>&1; then
+# (IMAGE "-": the add-on builds from the release tag's source, the release itself is enough)
+if [ "$IMAGE" != "-" ] && ! docker manifest inspect "$IMAGE:$latest" >/dev/null 2>&1; then
     echo "$ADDON: release $latest exists but $IMAGE:$latest is not published yet, skipping" >&2
     echo "changed=false"
     echo "version=$current"

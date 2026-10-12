@@ -14,8 +14,9 @@ https://github.com/MineTech13/ha-addons
 | --- | --- | --- |
 | [Spoolman (Ingress + Direct API)](spoolman-hybrid/README.md) | Spoolman with HA Ingress for remote use plus a direct API port (OctoEverywhere, Moonraker, ...) | [Donkie/Spoolman](https://github.com/Donkie/Spoolman) |
 | [ACE Lane Bridge](ace-lane-bridge/README.md) (experimental) | Books filament usage per ACE slot into Spoolman via Moonraker (experimental) | [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) |
+| [Kobra Vision](kobra-vision/README.md) (experimental) | AI print-failure detection (spaghetti) for the ACE Lane Bridge, Obico's model on the CPU | [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`vision/`) |
 
-All apps are thin wrappers around the upstream container images, pulled straight from the upstream projects' own registries. This repository is not affiliated with the upstream projects.
+All apps are thin wrappers around the upstream container images, pulled straight from the upstream projects' own registries (Kobra Vision is built from the upstream release tag, because upstream only publishes it as `latest`). This repository is not affiliated with the upstream projects.
 
 ## Automatic upstream updates
 
@@ -38,4 +39,4 @@ Our own changes to an app: bump the `-<rev>` suffix of `version` in its `config.
 
 ## License
 
-Apache-2.0, see [LICENSE](LICENSE). Upstream projects keep their own licenses (Spoolman: MIT, kobra-spoolman: MIT).
+Apache-2.0, see [LICENSE](LICENSE). Upstream projects keep their own licenses (Spoolman: MIT, kobra-spoolman: MIT, its kobra-vision service: AGPL-3.0).
