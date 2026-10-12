@@ -46,7 +46,7 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `MOONRAKER_API_KEY` | Only if Moonraker requires one |
 | `DRY_RUN` | Log only, write nothing |
 | `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single snapshots (a few fps) instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG |
-| `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
+| `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page and in the pairing QR code for the app (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
 | `VISION_URL` | AI print-failure detection: address of [Kobra Vision](../kobra-vision/README.md). Empty = the Kobra Vision add-on if installed, otherwise AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
 | `VISION_TOKEN` | Only if `VISION_TOKEN` is also set in the Kobra Vision add-on |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
