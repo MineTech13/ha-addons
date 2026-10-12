@@ -57,3 +57,10 @@
 ## 2.21.1-5
 - Clicking the filament name on a slot card (overview) now opens that spool under Filament → Spulen; before, it only selected the spool and nothing visible happened.
 - Printer log files (Logs page) and the AI test-image upload now work in the HA sidebar (ingress); they used absolute `/api/...` paths that missed the ingress path.
+
+## 3.12.0-0
+- Upstream update to 3.12.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.12.0)). 3.12 supports the stock firmware + Rinkhals again (next to Klipper + ACEPRO) and detects the setup on its own, so this add-on follows the 3.x line again; automatic updates now stay on 3.x.
+- New on Rinkhals: ACE card with endless spool, runout detection and the firmware's purge multiplier. The web UI is English by default, with German as a per-browser choice.
+- New option `UI_LANGUAGE` (`en` or `de`). It is also passed to the Spoolman setup script, which now creates English field and vendor names unless set to `de`.
+- Make a backup before updating: upstream has not yet tested the 2.21.1 → 3.12 upgrade on a real Rinkhals printer.
+- Ingress patches ported to the 3.12 web UI (camera snapshots, copyable camera links, slot name opens the spool, printer logs and AI test image).

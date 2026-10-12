@@ -48,7 +48,7 @@ if [ "${RUN_SPOOLMAN_SETUP:-false}" = "true" ]; then
         sleep 2
     done
     if [ "$READY" = "1" ]; then
-        python /opt/spoolman_setup.py --yes --url "$SPOOLMAN_URL" \
+        python /opt/spoolman_setup.py --yes --url "$SPOOLMAN_URL" --language "${UI_LANGUAGE:-en}" \
             || echo "[WARN] Spoolman setup script failed (see output above), continuing"
     else
         echo "[WARN] Spoolman not reachable after 60s, skipping setup. Check SPOOLMAN_URL."
