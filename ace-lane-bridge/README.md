@@ -1,6 +1,6 @@
 # ACE Lane Bridge (Spoolman) - EXPERIMENTAL
 
-Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`ace-lane-bridge` 2.8.1, MIT) as a Home Assistant add-on. It sits between **Moonraker** (Rinkhals) and **Spoolman**:
+Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`ace-lane-bridge` 2.21.1, MIT) as a Home Assistant add-on. It sits between **Moonraker** (Rinkhals) and **Spoolman**:
 
 - Assign Spoolman spools to the ACE slots on a web page in the HA sidebar ("ACE Lanes")
 - Measures filament use per slot and books it to the right spool in Spoolman

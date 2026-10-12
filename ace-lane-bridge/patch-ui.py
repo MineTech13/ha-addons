@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Patch the bridge web UI for use behind Home Assistant ingress. Each patch is optional:
+"""Patch the bridge web UI for use behind Home Assistant ingress (and a few small UI fixes). Each patch is optional:
 a missing anchor (upstream changed the code) only prints a warning."""
 import os
 import pathlib
@@ -71,3 +71,19 @@ patch("pages.js", 'url=${cameraUrl(key)} />', 'url=${pubUrl(cameraUrl(key))} />'
 patch("pages.js", 'url=${cameraUrl(key, "snapshot.jpg")} />', 'url=${pubUrl(cameraUrl(key, "snapshot.jpg"))} />', "camera link (snapshot)")
 patch("pages.js", 'import { cameraKey, cameraUrl } from "./media.js";\n',
       'import { cameraKey, cameraUrl } from "./media.js";\n' + helper, "camera link helper", done_marker="const pubUrl")
+
+# 3. Filament name on a slot card only selected the spool; the spool detail is shown on Filament → Spulen,
+#    so on the overview the click did nothing visible. Jump there (same pattern upstream uses for "Spulen dieser Sorte").
+patch(
+    "components.js",
+    "const open = () => sp && set({ sel: sp.spool_id });",
+    'const open = () => { if (!sp) return; set({ sel: sp.spool_id }); location.hash = "#/filament/spulen"; };',
+    "slot name opens spool",
+    done_marker='location.hash = "#/filament/spulen"; };',
+)
+
+# 4./5. Raw fetch() calls with absolute paths (not covered by the api() patch in run.sh) miss the ingress path.
+patch("terminal.js", "fetch(`/api/logs/printer/", "fetch(`api/logs/printer/", "printer logs under ingress",
+      done_marker="fetch(`api/logs/printer/")
+patch("ai.js", 'fetch("/api/vision/test"', 'fetch("api/vision/test"', "AI test image under ingress",
+      done_marker='fetch("api/vision/test"')
