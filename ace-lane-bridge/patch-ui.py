@@ -33,7 +33,7 @@ if os.environ.get("INGRESS_CAMERA_SNAPSHOTS", "true") == "true":
         "  const src = on && key ? cameraUrl(key) + `&v=${retry}` : null;\n",
         f"""  const ING = {INGRESS};
   const [snap, setSnap] = useState(null);
-  useEffect(() => {{          // ingress: einzelne Bilder nacheinander holen statt MJPEG-Stream
+  useEffect(() => {{          // ingress: fetch single frames one after the other instead of the MJPEG stream
     if (!ING || !on || !key) return;
     let stop = false, timer = null, prev = null;
     const loop = async () => {{
@@ -44,7 +44,7 @@ if os.environ.get("INGRESS_CAMERA_SNAPSHOTS", "true") == "true":
         const u = URL.createObjectURL(await r.blob());
         if (stop) URL.revokeObjectURL(u);
         else {{ setSnap(u); setErr(null); if (prev) URL.revokeObjectURL(prev); prev = u; }}
-      }} catch {{ if (!stop) setErr("Kamera nicht erreichbar – neuer Versuch …"); wait = 3000; }}
+      }} catch {{ if (!stop) setErr(t("Camera not reachable – trying again …")); wait = 3000; }}
       if (!stop) timer = setTimeout(loop, wait);
     }};
     loop();
@@ -60,7 +60,7 @@ if os.environ.get("INGRESS_CAMERA_SNAPSHOTS", "true") == "true":
 public = os.environ.get("BRIDGE_PUBLIC_URL", "").strip().rstrip("/")
 base = repr(public) if public else '`http://${location.hostname}:7913`'
 helper = f"""
-/** Links zum Kopieren: unter Ingress die direkte Adresse der Bridge (der Ingress-Pfad braucht eine HA-Anmeldung). */
+/** Links to copy: under ingress the direct address of the bridge (the ingress path needs a HA login). */
 const pubUrl = (u) => {{
   if (!{INGRESS}) return u;
   const base = {base};
@@ -72,14 +72,14 @@ patch("pages.js", 'url=${cameraUrl(key, "snapshot.jpg")} />', 'url=${pubUrl(came
 patch("pages.js", 'import { cameraKey, cameraUrl } from "./media.js";\n',
       'import { cameraKey, cameraUrl } from "./media.js";\n' + helper, "camera link helper", done_marker="const pubUrl")
 
-# 3. Filament name on a slot card only selected the spool; the spool detail is shown on Filament → Spulen,
-#    so on the overview the click did nothing visible. Jump there (same pattern upstream uses for "Spulen dieser Sorte").
+# 3. Filament name on a slot card only selected the spool; the spool detail is shown on Filament → Spools,
+#    so on the overview the click did nothing visible. Jump there (same pattern upstream uses for "Spools of this filament").
 patch(
     "components.js",
     "const open = () => sp && set({ sel: sp.spool_id });",
-    'const open = () => { if (!sp) return; set({ sel: sp.spool_id }); location.hash = "#/filament/spulen"; };',
+    'const open = () => { if (!sp) return; set({ sel: sp.spool_id }); location.hash = "#/filament/spools"; };',
     "slot name opens spool",
-    done_marker='location.hash = "#/filament/spulen"; };',
+    done_marker='location.hash = "#/filament/spools"; };',
 )
 
 # 4./5. Raw fetch() calls with absolute paths (not covered by the api() patch in run.sh) miss the ingress path.

@@ -1,12 +1,14 @@
 # ACE Lane Bridge (Spoolman) - EXPERIMENTAL
 
-Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`ace-lane-bridge` 2.21.1, MIT) as a Home Assistant add-on. It sits between **Moonraker** (Rinkhals) and **Spoolman**:
+Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`ace-lane-bridge` 3.12.0, MIT) as a Home Assistant add-on. It sits between **Moonraker** and **Spoolman**:
 
 - Assign Spoolman spools to the ACE slots on a web page in the HA sidebar ("ACE Lanes")
 - Measures filament use per slot and books it to the right spool in Spoolman
 - Writes `lane_data` to Moonraker for Mainsail/Fluidd/OrcaSlicer
 
-> **Version line:** this add-on stays on upstream **2.x** (stock firmware + Rinkhals). Upstream 3.x needs Klipper with the ACEPRO driver on a Raspberry Pi and does not see the ACE on Rinkhals, so automatic updates are limited to 2.x.
+> **Both setups:** since upstream 3.12.0 one bridge works with the stock firmware + [Rinkhals](https://github.com/rinkhals-community/Rinkhals) and with Klipper + ACEPRO on a Raspberry Pi. It detects which one from Moonraker; there is nothing to configure.
+>
+> **Upgrading from 2.21.1 (Rinkhals):** make a backup of the add-on first. Upstream tested the 2.21.1 → 3.12 path with replays and a simulated printer, not yet on a real Rinkhals printer. Settings, paired devices and history carry over.
 
 > The upstream project targets the **Kobra S1 + ACE 2 Pro**. A **Kobra 3 + ACE Pro** is untested. Start with `DRY_RUN: true`, which logs what would be booked and writes nothing, and compare with a real print before turning it off.
 
@@ -24,7 +26,7 @@ Do not also enable Moonraker's own `[spoolman]` booking for the same prints, or 
 
 ## Spoolman setup script (optional)
 
-Upstream ships `spoolman_setup.py`, which adds the extra fields (OrcaSlicer settings, NFC tag, drying info) and a "Vorlage" vendor with material template filaments to Spoolman. It is not needed for slot assignment and booking.
+Upstream ships `spoolman_setup.py`, which adds the extra fields (OrcaSlicer settings, NFC tag, drying info) and a "Template" vendor with material template filaments (German names with `UI_LANGUAGE: de`; an existing "Vorlage" vendor from before 3.12 is kept) to Spoolman. It is not needed for slot assignment and booking.
 
 The script is bundled in this add-on (same version as the bridge). To run it: set `RUN_SPOOLMAN_SETUP` to `true` and restart the add-on. It waits for Spoolman, runs once, and the result is in the add-on log. It only adds missing things, never changes or deletes existing ones, so running it repeatedly is harmless; set the option back to `false` afterwards to skip the wait on later starts. Home Assistant add-ons cannot have custom buttons, so this option is the way to trigger it.
 
@@ -40,6 +42,7 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
 | `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page |
+| `UI_LANGUAGE` | `en` (default) or `de`: language of the printer display, notifications and new devices, and of the names the Spoolman setup script creates. Each browser and the app can still pick their own language |
 | `LOG_LEVEL` | `DEBUG` for more detail |
 
 Runtime settings (usage booking, auto-unassign on empty, ACE slot info, camera, print preview, moisture, notices and more) are changed in the bridge's web UI under Settings, not here. Upstream only uses the matching environment variables as start values; a value saved in the UI wins from then on.
