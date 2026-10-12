@@ -53,3 +53,7 @@
 
 ## 2.21.1-4
 - Back to upstream 2.21.1. Upstream 3.0.0 and later are for a different setup (Klipper with the ACEPRO driver on a Raspberry Pi) and read the ACE from ACEPRO instead of Rinkhals/GoKlipper's `mmu` object, so on stock firmware + Rinkhals the ACE unit is no longer seen. Upstream: "Stay on 2.21.1 for the stock firmware." Automatic updates now stay on the 2.x line.
+
+## 2.21.1-5
+- Clicking the filament name on a slot card (overview) now opens that spool under Filament → Spulen; before, it only selected the spool and nothing visible happened.
+- Printer log files (Logs page) and the AI test-image upload now work in the HA sidebar (ingress); they used absolute `/api/...` paths that missed the ingress path.
