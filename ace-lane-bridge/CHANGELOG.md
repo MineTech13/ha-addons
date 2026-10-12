@@ -76,3 +76,6 @@
 
 ## 3.12.0-4
 - With a detected Spoolman add-on and `SPOOLMAN_PUBLIC_URL` empty, the Spoolman link on the bridge's settings page opens Spoolman's page in Home Assistant (e.g. `/7e11bc2a_spoolman_hybrid`) instead of the internal address, which a browser cannot reach.
+
+## 3.12.0-5
+- The pairing QR code ("Add device") opened under ingress now carries the direct address of the bridge (`http://<hostname you opened HA with>:7913`, or `BRIDGE_PUBLIC_URL` if set) instead of the Home Assistant address, which the app cannot pair with.

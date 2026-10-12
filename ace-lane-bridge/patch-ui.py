@@ -87,3 +87,13 @@ patch("terminal.js", "fetch(`/api/logs/printer/", "fetch(`api/logs/printer/", "p
       done_marker="fetch(`api/logs/printer/")
 patch("ai.js", 'fetch("/api/vision/test"', 'fetch("api/vision/test"', "AI test image under ingress",
       done_marker='fetch("api/vision/test"')
+
+# 6. Pairing QR code for the app encodes location.origin: under ingress that is the HA address, which the app cannot
+#    pair with (no HA login). Use the direct address of the bridge instead, same as the camera links above.
+patch(
+    "dialogs.js",
+    "encodeURIComponent(location.origin)",
+    f"encodeURIComponent({INGRESS} ? {base} : location.origin)",
+    "pairing QR code under ingress",
+    done_marker="encodeURIComponent(location.pathname.includes(",
+)
