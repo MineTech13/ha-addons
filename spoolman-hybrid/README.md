@@ -15,6 +15,24 @@ Spoolman for Home Assistant with both access methods:
 | `ACCESS_MODE` | `both` (default), `ingress` or `direct` (see below) |
 | `DIRECT_API_ONLY` | Only used in `both` mode. `true` (default): direct port serves only `/api/`. `false`: proxy everything (the UI will not render properly there because its links carry the ingress path) |
 
+### Optional options
+
+Hidden under "Show unused optional configuration options". Empty = Spoolman's default. Spoolman has no setting for these in its web UI; restart the add-on after changing them.
+
+| Option | Description |
+| --- | --- |
+| `SPOOLMAN_LOGGING_LEVEL` | `DEBUG`, `INFO` (default), `WARNING`, `ERROR` or `CRITICAL` |
+| `SPOOLMAN_AUTOMATIC_BACKUP` | Nightly database backup into `backups/` (default on) |
+| `SPOOLMAN_METRICS_ENABLED` | Adds spool and filament values to the Prometheus metrics at `http://<HA-IP>:7912/metrics` (default off) |
+| `SPOOLMAN_ALLOWED_HOSTS` | Comma-separated hostnames Spoolman answers to, e.g. `spoolman.example.com`. Only needed if you reach the direct port through a public domain name; IP addresses and local names always work |
+| `SPOOLMAN_DB_TYPE` | `sqlite` (default, stored in the add-on config folder), `mysql`, `postgres` or `cockroachdb`. For the MariaDB add-on use `mysql` with host `core-mariadb`. Switching does not move existing data |
+| `SPOOLMAN_DB_HOST`, `SPOOLMAN_DB_PORT`, `SPOOLMAN_DB_NAME` | External database server, port and database name |
+| `SPOOLMAN_DB_USERNAME`, `SPOOLMAN_DB_PASSWORD` | External database login |
+| `SPOOLMAN_DB_QUERY` | Extra connection parameters as a query string, e.g. `unix_socket=/path/to/socket` |
+| `EXTERNAL_DB_URL` | Filament catalog to import from (default SpoolmanDB) |
+| `EXTERNAL_DB_NAME` | Display name of that catalog in the UI |
+| `EXTERNAL_DB_SYNC_INTERVAL` | Seconds between catalog syncs (default `3600`, `0` = off) |
+
 ## Access modes
 
 | Mode | Ingress (sidebar) | Direct port 7912 |

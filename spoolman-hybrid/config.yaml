@@ -1,5 +1,5 @@
 name: Spoolman (Ingress + Direct API)
-version: "0.27.0-2"
+version: "0.27.0-3"
 slug: spoolman_hybrid
 description: "Spoolman with HA Ingress for remote management and a direct port for API access (e.g. OctoEverywhere)."
 arch:
@@ -35,5 +35,19 @@ schema:
   SPOOLMAN_CORS_ORIGIN: str?
   ACCESS_MODE: list(both|ingress|direct)
   DIRECT_API_ONLY: bool
+  SPOOLMAN_LOGGING_LEVEL: list(DEBUG|INFO|WARNING|ERROR|CRITICAL)?
+  SPOOLMAN_AUTOMATIC_BACKUP: bool?
+  SPOOLMAN_METRICS_ENABLED: bool?
+  SPOOLMAN_ALLOWED_HOSTS: str?
+  SPOOLMAN_DB_TYPE: list(sqlite|mysql|postgres|cockroachdb)?
+  SPOOLMAN_DB_HOST: str?
+  SPOOLMAN_DB_PORT: port?
+  SPOOLMAN_DB_NAME: str?
+  SPOOLMAN_DB_USERNAME: str?
+  SPOOLMAN_DB_PASSWORD: password?
+  SPOOLMAN_DB_QUERY: str?
+  EXTERNAL_DB_URL: str?
+  EXTERNAL_DB_NAME: str?
+  EXTERNAL_DB_SYNC_INTERVAL: int(0,)?
 hassio_api: true
 privileged: []

@@ -1,5 +1,5 @@
 name: ACE Lane Bridge (Spoolman)
-version: "3.12.0-1"
+version: "3.12.0-2"
 slug: ace_lane_bridge
 stage: experimental
 description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (stock firmware + Rinkhals, or Klipper + ACEPRO). Community project xNoVoSx/kobra-spoolman."
@@ -38,5 +38,28 @@ schema:
   VISION_URL: str?
   VISION_TOKEN: password?
   UI_LANGUAGE: list(en|de)?
+  MQTT_HOST: str?
+  MQTT_PORT: port?
+  MQTT_USER: str?
+  MQTT_PASSWORD: password?
+  MQTT_PREFIX: str?
+  MQTT_DISCOVERY: str?
+  ROOM_SENSOR_TOPIC: str?
+  CAMERA_SNAPSHOT_URL: str?
+  CAMERA_STREAM_URL: str?
+  CAMERA_INTERVAL_S: float(0.1,60)?
+  SPOOLMAN_POLL_S: float(5,3600)?
+  SLOT_LOCATION_PREFIX: str?
+  SHELF_LOCATION: str?
+  TEMPLATE_VENDOR: str?
+  LANE_NAMESPACE: str?
+  EMPTY_GATE_MODE: list(delete|keep)?
+  GATE_DEBOUNCE_S: float(0,60)?
+  USAGE_TOLERANCE: float(0,1)?
+  DEFAULT_DIAMETER: float(1,3)?
+  DEFAULT_DENSITY: float(0.5,3)?
+  TAG_SKU_PREFIX: str?
+  TAG_NR_MIN: int(0,)?
+  TAG_NR_MAX: int(0,)?
   LOG_LEVEL: list(DEBUG|INFO|WARNING|ERROR)
 privileged: []

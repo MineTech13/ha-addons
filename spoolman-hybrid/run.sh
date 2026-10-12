@@ -30,6 +30,21 @@ if [ -n "$SPOOLMAN_CORS_ORIGIN" ]; then
     export SPOOLMAN_CORS_ORIGIN
     echo "[INFO] CORS origin set to: ${SPOOLMAN_CORS_ORIGIN}"
 fi
+
+# Optional Spoolman settings: only exported when set, so Spoolman keeps its own defaults otherwise
+for key in SPOOLMAN_LOGGING_LEVEL SPOOLMAN_AUTOMATIC_BACKUP SPOOLMAN_METRICS_ENABLED SPOOLMAN_ALLOWED_HOSTS \
+    SPOOLMAN_DB_TYPE SPOOLMAN_DB_HOST SPOOLMAN_DB_PORT SPOOLMAN_DB_NAME SPOOLMAN_DB_USERNAME \
+    SPOOLMAN_DB_PASSWORD SPOOLMAN_DB_QUERY EXTERNAL_DB_URL EXTERNAL_DB_NAME EXTERNAL_DB_SYNC_INTERVAL; do
+    value="$(opt "$key" "")"
+    if [ -n "$value" ] && [ "$value" != "None" ]; then
+        export "$key=$value"
+        case "$key" in
+            SPOOLMAN_DB_PASSWORD) echo "[INFO] ${key} is set" ;;
+            *) echo "[INFO] ${key}: ${value}" ;;
+        esac
+    fi
+done
+
 ACCESS_MODE="$(opt ACCESS_MODE both)"
 DIRECT_API_ONLY="$(opt DIRECT_API_ONLY true)"
 echo "[INFO] Access mode: ${ACCESS_MODE}"
@@ -142,7 +157,11 @@ CONF
             echo "        location /api/ {"
             proxy_body "$BASE_PATH"
             echo "        }"
-            echo "[INFO] Direct port 7912: API only (/api/)" >&2
+            # Prometheus scrape endpoint (spool and filament values only with SPOOLMAN_METRICS_ENABLED)
+            echo "        location = /metrics {"
+            proxy_body "$BASE_PATH"
+            echo "        }"
+            echo "[INFO] Direct port 7912: API only (/api/, /metrics)" >&2
         else
             echo "        location / {"
             proxy_body "$BASE_PATH"

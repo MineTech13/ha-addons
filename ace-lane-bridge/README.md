@@ -47,6 +47,29 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `UI_LANGUAGE` | `en` (default) or `de`: language of the printer display, notifications and new devices, and of the names the Spoolman setup script creates. Each browser and the app can still pick their own language |
 | `LOG_LEVEL` | `DEBUG` for more detail |
 
+### Optional options
+
+These are hidden under "Show unused optional configuration options". Empty = upstream default. They have no setting in the bridge's web UI; change them here and restart the add-on.
+
+| Option | Meaning |
+| --- | --- |
+| `MQTT_HOST` | Home Assistant over MQTT: broker address, e.g. `core-mosquitto` for the Mosquitto add-on. Empty = MQTT off |
+| `MQTT_PORT`, `MQTT_USER`, `MQTT_PASSWORD` | Broker port (default `1883`) and login |
+| `MQTT_PREFIX` | Topic prefix of the bridge (default `kobra-spoolman`) |
+| `MQTT_DISCOVERY` | Home Assistant discovery prefix (default `homeassistant`) |
+| `ROOM_SENSOR_TOPIC` | MQTT topic of a humidity sensor in the filament storage room, e.g. `zigbee2mqtt/filament_storage` |
+| `CAMERA_SNAPSHOT_URL`, `CAMERA_STREAM_URL` | Camera addresses. Empty = taken from Moonraker's webcam list |
+| `CAMERA_INTERVAL_S` | A single snapshot request reuses an image younger than this (default `1`) |
+| `SPOOLMAN_POLL_S` | How often Spoolman is re-read, in seconds (default `20`) |
+| `SLOT_LOCATION_PREFIX` | Spoolman location of a loaded spool (default `ACE Slot `, giving `ACE Slot 1` …) |
+| `SHELF_LOCATION`, `TEMPLATE_VENDOR` | Spoolman location of unloaded spools and vendor name of the material templates. Empty = `Shelf`/`Template`, or the German `Regal`/`Vorlage` if your Spoolman already uses them. Changing these on an existing install does not rename anything in Spoolman |
+| `LANE_NAMESPACE` | Moonraker database namespace for `lane_data` (default `lane_data`) |
+| `EMPTY_GATE_MODE` | `delete` (default) removes empty slots from `lane_data`, `keep` keeps them |
+| `GATE_DEBOUNCE_S` | An RFID tag must stay in the slot this long before its spool is assigned; on Rinkhals also how long the active slot must stay the same before usage moves to it (default `3`) |
+| `USAGE_TOLERANCE` | Hint when a slot used less than the G-code estimate minus this share (default `0.03` = 3 %) |
+| `DEFAULT_DIAMETER`, `DEFAULT_DENSITY` | Only for estimates without a spool (default `1.75` / `1.24`) |
+| `TAG_SKU_PREFIX`, `TAG_NR_MIN`, `TAG_NR_MAX` | Numbering of self-written NFC tags, SKU `<prefix>-<number>` (default `AHPEBK` / `1000` / `99999`) |
+
 Runtime settings (usage booking, auto-unassign on empty, ACE slot info, camera, print preview, moisture, notices and more) are changed in the bridge's web UI under Settings, not here. Upstream only uses the matching environment variables as start values; a value saved in the UI wins from then on.
 
 ## Access
