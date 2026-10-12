@@ -34,6 +34,17 @@ case "$ADDON" in
         LOGS="$(docker logs "$NAME" 2>&1)"
         grep -q 'Patched web UI for ingress' <<<"$LOGS" || fail "ingress UI patch did not apply (upstream layout changed)"
         ;;
+    kobra-vision)
+        echo '{"THREADS":2,"UNLOAD_AFTER_S":600,"LOG_LEVEL":"INFO"}' > "$OPTS"
+        docker run -d --name "$NAME" -v "$OPTS:/data/options.json:ro" -p 17917:7917 "$TAG" >/dev/null
+        wait_http http://127.0.0.1:17917/v1/health 60 || fail "health check"
+        curl -fsS http://127.0.0.1:17917/v1/health | grep -q '"ok": true' || fail "model missing"
+        # one detection on a generated picture: proves ONNX Runtime and the model load
+        docker exec "$NAME" python -c 'import io, urllib.request; from PIL import Image
+b = io.BytesIO(); Image.new("RGB", (640, 480), (90, 90, 90)).save(b, "JPEG")
+r = urllib.request.Request("http://127.0.0.1:7917/v1/detect", b.getvalue(), {"Content-Type": "image/jpeg"})
+print(urllib.request.urlopen(r, timeout=120).read().decode())' || fail "detection"
+        ;;
     *)
         echo "no smoke test defined for $ADDON, build only" >&2
         ;;

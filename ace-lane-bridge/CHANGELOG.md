@@ -64,3 +64,6 @@
 - New option `UI_LANGUAGE` (`en` or `de`). It is also passed to the Spoolman setup script, which now creates English field and vendor names unless set to `de`.
 - Make a backup before updating: upstream has not yet tested the 2.21.1 → 3.12 upgrade on a real Rinkhals printer.
 - Ingress patches ported to the 3.12 web UI (camera snapshots, copyable camera links, slot name opens the spool, printer logs and AI test image).
+
+## 3.12.0-1
+- New options `VISION_URL` and `VISION_TOKEN` for the AI print-failure detection, served by the new **Kobra Vision** add-on (e.g. `http://<hostname of the Kobra Vision add-on>:7917`). Empty = AI off, as before.

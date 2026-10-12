@@ -40,6 +40,8 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `DRY_RUN` | Log only, write nothing |
 | `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single snapshots (a few fps) instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG |
 | `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
+| `VISION_URL` | AI print-failure detection: address of the [Kobra Vision](../kobra-vision/README.md) add-on, e.g. `http://<hostname>:7917` (hostname from that add-on's Info page). Empty = AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
+| `VISION_TOKEN` | Only if `VISION_TOKEN` is also set in the Kobra Vision add-on |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
 | `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page |
 | `UI_LANGUAGE` | `en` (default) or `de`: language of the printer display, notifications and new devices, and of the names the Spoolman setup script creates. Each browser and the app can still pick their own language |

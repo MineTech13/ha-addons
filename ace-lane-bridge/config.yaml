@@ -1,5 +1,5 @@
 name: ACE Lane Bridge (Spoolman)
-version: "3.12.0-0"
+version: "3.12.0-1"
 slug: ace_lane_bridge
 stage: experimental
 description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (stock firmware + Rinkhals, or Klipper + ACEPRO). Community project xNoVoSx/kobra-spoolman."
@@ -35,6 +35,8 @@ schema:
   RUN_SPOOLMAN_SETUP: bool
   INGRESS_CAMERA_SNAPSHOTS: bool
   BRIDGE_PUBLIC_URL: str?
+  VISION_URL: str?
+  VISION_TOKEN: password?
   UI_LANGUAGE: list(en|de)?
   LOG_LEVEL: list(DEBUG|INFO|WARNING|ERROR)
 privileged: []
