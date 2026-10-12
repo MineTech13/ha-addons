@@ -2,6 +2,8 @@
 
 Prints shell `export` lines for SPOOLMAN_URL / VISION_URL when they are empty
 and the matching add-on is installed. An address set in the options always wins.
+A detected Spoolman also gets SPOOLMAN_PUBLIC_URL (the link on the web page) set
+to its Home Assistant ingress page, unless that option is set.
 Add-ons from one repository share the slug prefix (<repo hash>_), so the other
 add-ons are looked up by name through the Supervisor API (info calls only).
 Never fails: without Supervisor access nothing is detected.
@@ -73,6 +75,12 @@ def main():
         url = "http://%s:%d" % (info["hostname"], port)
         print("export %s=%s" % (key, shlex.quote(url)))
         log("%s = %s (add-on %s, %s)" % (key, url, info.get("name", target), info.get("state", "?")))
+        if key == "SPOOLMAN_URL" and info.get("ingress") and not os.environ.get("SPOOLMAN_PUBLIC_URL"):
+            # Page path in the HA frontend, relative to the HA address the bridge UI was opened with
+            slug = info.get("slug") or prefix + target
+            link = "/" + slug if info.get("ingress_panel") else "/hassio/ingress/" + slug
+            print("export SPOOLMAN_PUBLIC_URL=%s" % shlex.quote(link))
+            log("SPOOLMAN_PUBLIC_URL = %s (Spoolman page in Home Assistant)" % link)
         if info.get("state") != "started":
             log("%s: the add-on is not running yet, the bridge keeps retrying" % key)
         elif not reachable(url + health):

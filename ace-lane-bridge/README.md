@@ -27,7 +27,7 @@ Do not also enable Moonraker's own `[spoolman]` booking for the same prints, or 
 When `SPOOLMAN_URL` or `VISION_URL` is empty, the bridge looks on every start for the **Spoolman (Ingress + Direct API)** and **[Kobra Vision](../kobra-vision/README.md)** add-ons from this repository and uses them over Home Assistant's internal network (`http://<hostname>:7912` and `http://<hostname>:7917`). The add-on log shows what it found (`Autodetect: ...`). An address you set in the options always wins, so a Spoolman or Kobra Vision running somewhere else still works.
 
 - Spoolman must run in access mode `both` or `direct`; `ingress` closes the port the bridge uses.
-- With a detected Spoolman the web page shows no "open in Spoolman" links, because the internal hostname does not work in a browser. Set `SPOOLMAN_PUBLIC_URL` (e.g. your Spoolman ingress or `http://<HA-IP>:7912` address) for the links.
+- The Spoolman link on the bridge's settings page then points to Spoolman's page in Home Assistant (`/<slug>`, e.g. `/7e11bc2a_spoolman_hybrid`, or `/hassio/ingress/<slug>` when Spoolman is not in the sidebar). The link is relative to the address you opened Home Assistant with, so it works in the ACE Lanes panel but not when the bridge is opened on port 7913; set `SPOOLMAN_PUBLIC_URL` for a fixed address.
 - A `VISION_TOKEN` is not copied over (other add-ons' options are not readable); set it in both add-ons if you use one.
 - Uninstalling Kobra Vision turns the AI off again on the next start of the bridge.
 
@@ -50,7 +50,7 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `VISION_URL` | AI print-failure detection: address of [Kobra Vision](../kobra-vision/README.md). Empty = the Kobra Vision add-on if installed, otherwise AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
 | `VISION_TOKEN` | Only if `VISION_TOKEN` is also set in the Kobra Vision add-on |
 | `RUN_SPOOLMAN_SETUP` | Run upstream's Spoolman setup script on start (see below) |
-| `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page |
+| `SPOOLMAN_PUBLIC_URL`, `PRINTER_UI_URL` | Links shown on the web page. Empty with a detected Spoolman add-on = its page in Home Assistant |
 | `UI_LANGUAGE` | `en` (default) or `de`: language of the printer display, notifications and new devices, and of the names the Spoolman setup script creates. Each browser and the app can still pick their own language |
 | `LOG_LEVEL` | `DEBUG` for more detail |
 

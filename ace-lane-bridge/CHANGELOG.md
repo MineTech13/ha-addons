@@ -73,3 +73,6 @@
 
 ## 3.12.0-3
 - `SPOOLMAN_URL` and `VISION_URL` are found on their own: when empty, the bridge uses the Spoolman (Ingress + Direct API) and Kobra Vision add-ons from this repository if they are installed (looked up through the Supervisor API, info calls only). An address set in the options still wins. `SPOOLMAN_URL` is now optional; the old example `http://192.168.1.10:7912` is treated as empty.
+
+## 3.12.0-4
+- With a detected Spoolman add-on and `SPOOLMAN_PUBLIC_URL` empty, the Spoolman link on the bridge's settings page opens Spoolman's page in Home Assistant (e.g. `/7e11bc2a_spoolman_hybrid`) instead of the internal address, which a browser cannot reach.
