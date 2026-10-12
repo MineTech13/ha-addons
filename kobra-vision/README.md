@@ -13,9 +13,8 @@ The add-on has no web page of its own. Everything is set and inspected in the br
 ## Setup
 
 1. Install and start this add-on. The first install takes a while: Home Assistant builds the image from the upstream release and downloads Obico's model (its checksum is checked).
-2. On this add-on's **Info** page, note the **Hostname** (something like `xxxxxxxx-kobra-vision`).
-3. In the **ACE Lane Bridge** add-on, set `VISION_URL` to `http://<that hostname>:7917` and restart the bridge.
-4. Open **ACE Lanes** → **AI**. The status should show the service as ready (CPU) after a few seconds.
+2. Restart the **ACE Lane Bridge** add-on. With its `VISION_URL` empty it finds this add-on on its own (the bridge log shows `Autodetect: VISION_URL = ...`). Only if that does not work, set `VISION_URL` to `http://<hostname>:7917`, with the **Hostname** from this add-on's **Info** page (something like `xxxxxxxx-kobra-vision`).
+3. Open **ACE Lanes** → **AI**. The status should show the service as ready (CPU) after a few seconds.
 
 Start with the default action *notify only*. Switch to *pause* only after a few weeks without false alarms.
 

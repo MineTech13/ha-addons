@@ -16,6 +16,10 @@ for k, v in opts.items():
     print("export %s=%s" % (k, shlex.quote(v)))
 ')"
 
+# Empty SPOOLMAN_URL / VISION_URL: use the Spoolman and Kobra Vision add-ons
+# from this repository if they are installed. Set options always win.
+eval "$(python /autodetect.py)"
+
 # State lives in the add-on config folder (visible as /addon_configs/<slug>/).
 # Older versions kept it in the hidden /data folder: copy it over once.
 export DATA_DIR=/config
@@ -32,7 +36,8 @@ export HTTP_PORT=7913
 [ -n "$TZ" ] || export TZ=UTC
 
 echo "[INFO] Moonraker: ${MOONRAKER_URL}"
-echo "[INFO] Spoolman:  ${SPOOLMAN_URL}"
+echo "[INFO] Spoolman:  ${SPOOLMAN_URL:-not set}"
+echo "[INFO] AI vision: ${VISION_URL:-off}"
 echo "[INFO] Dry run:   ${DRY_RUN:-false}"
 
 # Optional: run upstream's Spoolman setup (extra fields + template filaments).

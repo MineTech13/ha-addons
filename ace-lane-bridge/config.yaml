@@ -1,5 +1,5 @@
 name: ACE Lane Bridge (Spoolman)
-version: "3.12.0-2"
+version: "3.12.0-3"
 slug: ace_lane_bridge
 stage: experimental
 description: "EXPERIMENTAL: Books filament usage per ACE slot into Spoolman via Moonraker (stock firmware + Rinkhals, or Klipper + ACEPRO). Community project xNoVoSx/kobra-spoolman."
@@ -20,14 +20,13 @@ ports_description:
   7913/tcp: "Direct access port (web UI, Android app, OrcaSlicer plugin). Clear the host port to disable."
 options:
   MOONRAKER_URL: "http://192.168.1.50:7125"
-  SPOOLMAN_URL: "http://192.168.1.10:7912"
   DRY_RUN: true
   RUN_SPOOLMAN_SETUP: false
   INGRESS_CAMERA_SNAPSHOTS: true
   LOG_LEVEL: "INFO"
 schema:
   MOONRAKER_URL: str
-  SPOOLMAN_URL: str
+  SPOOLMAN_URL: str?
   MOONRAKER_API_KEY: str?
   SPOOLMAN_PUBLIC_URL: str?
   PRINTER_UI_URL: str?
@@ -62,4 +61,5 @@ schema:
   TAG_NR_MIN: int(0,)?
   TAG_NR_MAX: int(0,)?
   LOG_LEVEL: list(DEBUG|INFO|WARNING|ERROR)
+hassio_api: true
 privileged: []
