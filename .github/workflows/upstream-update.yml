@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write   # start the Lint workflow on update PRs
   contents: write
   pull-requests: write
 
@@ -77,6 +78,8 @@ jobs:
             --title "Update ${{ matrix.addon }} to $ver (build/smoke test failed)" \
             --body "Automatic upstream update. The build or smoke test failed, so this was not merged. See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Upstream probably changed something the add-on's run.sh relies on." \
             || echo "PR already exists"
+          # a PR opened with the workflow token starts no pull_request runs: run Lint on the branch (checks show on the PR)
+          gh workflow run lint.yml --ref "update/${{ matrix.addon }}-$ver"
           exit 1
 
       - name: Tests passed - open PR for manual review
@@ -89,3 +92,5 @@ jobs:
             --title "Update ${{ matrix.addon }} to $ver" \
             --body "Automatic upstream update, build and smoke test passed. This add-on is set to manual review (scripts/upstreams.tsv): check the [release notes](https://github.com/$repo/releases/tag/v$ver) and merge to ship it. [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." \
             || echo "PR already exists"
+          # a PR opened with the workflow token starts no pull_request runs: run Lint on the branch (checks show on the PR)
+          gh workflow run lint.yml --ref "update/${{ matrix.addon }}-$ver"
