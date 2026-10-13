@@ -5,3 +5,6 @@
 
 ## 3.14.0-0
 - Upstream update to 3.14.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.14.0)), kept in step with the ACE Lane Bridge. No changes to kobra-vision itself since 3.12.0.
+
+## 3.17.0-0
+- Upstream update to 3.17.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.17.0)).
