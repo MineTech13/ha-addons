@@ -1,4 +1,4 @@
-ARG UPSTREAM_VERSION=3.17.0
+ARG UPSTREAM_VERSION=3.18.2
 # Same Python base as upstream's vision/Dockerfile (upstream pulls it via the AWS ECR mirror for its CI)
 FROM python:3.12-slim
 

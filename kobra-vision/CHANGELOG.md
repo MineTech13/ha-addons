@@ -8,3 +8,6 @@
 
 ## 3.17.0-0
 - Upstream update to 3.17.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.17.0)).
+
+## 3.18.2-0
+- Upstream update to 3.18.2 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.18.2)).
