@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 ADDON="${1:?usage: $0 <addon-dir>}"
 
 # add-on dir -> upstream repo + image, from scripts/upstreams.tsv
-IFS=$'\t' read -r _ REPO IMAGE MAX_MAJOR < <(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="$ADDON" '$1 == a') \
+IFS=$'\t' read -r _ REPO IMAGE _ MAX_MAJOR < <(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="$ADDON" '$1 == a') \
     || { echo "$ADDON is not listed in scripts/upstreams.tsv" >&2; exit 2; }
 [ -n "${REPO:-}" ] || { echo "$ADDON is not listed in scripts/upstreams.tsv" >&2; exit 2; }
 

@@ -25,9 +25,9 @@ All apps are thin wrappers around the upstream container images, pulled straight
 1. looks up the latest upstream release and checks that the container image for it is published,
 2. bumps `ARG UPSTREAM_VERSION` in the `Dockerfile`, `version` in `config.yaml` (as `<upstream>-0`) and the `CHANGELOG.md`,
 3. builds the app and runs a smoke test (`scripts/smoke-test.sh`),
-4. pushes to `main` if the test passes, otherwise opens a pull request for manual review.
+4. update mode `merge` (4th column of `upstreams.tsv`): pushes to `main` if the test passes, otherwise opens a pull request for manual review. Update mode `pr`: always opens a pull request, so nothing ships before you merge it (used for the xNoVoSx/kobra-spoolman apps).
 
-Home Assistant then offers the update. To pin an app to a version, remove its line from `upstreams.tsv`.
+Home Assistant offers the update once it is on `main`. To pin an app to a version, remove its line from `upstreams.tsv`.
 
 ## Adding a new app
 

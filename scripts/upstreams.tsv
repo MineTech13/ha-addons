@@ -1,4 +1,4 @@
-# add-on dir	upstream GitHub repo	upstream container image (tag = release without leading v; "-" = built from the release tag's source)	max_major (optional: auto-update never goes past this major version)
-spoolman-hybrid	Donkie/Spoolman	ghcr.io/donkie/spoolman
-ace-lane-bridge	xNoVoSx/kobra-spoolman	ghcr.io/xnovosx/ace-lane-bridge	3
-kobra-vision	xNoVoSx/kobra-spoolman	-	3
+# add-on dir	upstream GitHub repo	upstream container image (tag = release without leading v; "-" = built from the release tag's source)	update mode ("merge" = straight to main when the smoke test passes, "pr" = always a pull request to review)	max_major (optional: auto-update never goes past this major version)
+spoolman-hybrid	Donkie/Spoolman	ghcr.io/donkie/spoolman	merge
+ace-lane-bridge	xNoVoSx/kobra-spoolman	ghcr.io/xnovosx/ace-lane-bridge	pr	3
+kobra-vision	xNoVoSx/kobra-spoolman	-	pr	3

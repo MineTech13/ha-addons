@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # started by upstream-update.yml for its own PRs (PRs opened with the workflow token trigger no pull_request runs)
+  workflow_dispatch:
 
 jobs:
   find:

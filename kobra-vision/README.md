@@ -1,6 +1,6 @@
 # Kobra Vision (AI failure detection) - EXPERIMENTAL
 
-Wraps **kobra-vision** from the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`vision/`, release 3.12.0, **AGPL-3.0**) as a Home Assistant add-on. It is the AI part of the [ACE Lane Bridge](../ace-lane-bridge/README.md):
+Wraps **kobra-vision** from the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`vision/`, release 3.14.0, **AGPL-3.0**) as a Home Assistant add-on. It is the AI part of the [ACE Lane Bridge](../ace-lane-bridge/README.md):
 
 - While a print runs, the bridge sends it a camera picture every 10 s.
 - It runs [Obico](https://github.com/TheSpaghettiDetective/obico-server)'s failure model (the former *Spaghetti Detective*) with ONNX Runtime on the CPU and returns what it found.

@@ -1,6 +1,6 @@
 # ACE Lane Bridge (Spoolman) - EXPERIMENTAL
 
-Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`ace-lane-bridge` 3.12.0, MIT) as a Home Assistant add-on. It sits between **Moonraker** and **Spoolman**:
+Wraps the community project [xNoVoSx/kobra-spoolman](https://github.com/xNoVoSx/kobra-spoolman) (`ace-lane-bridge` 3.14.0, MIT) as a Home Assistant add-on. It sits between **Moonraker** and **Spoolman**:
 
 - Assign Spoolman spools to the ACE slots on a web page in the HA sidebar ("ACE Lanes")
 - Measures filament use per slot and books it to the right spool in Spoolman
@@ -45,7 +45,8 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `SPOOLMAN_URL` | Spoolman API. Empty = the Spoolman add-on from this repository, if installed. Set it for a Spoolman elsewhere, e.g. `http://<IP>:7912` |
 | `MOONRAKER_API_KEY` | Only if Moonraker requires one |
 | `DRY_RUN` | Log only, write nothing |
-| `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single snapshots (a few fps) instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG |
+| `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single images one after the other instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG (upstream setting `CAMERA_INGRESS_SNAPSHOTS`) |
+| `HA_INGRESS_TRUST` | Default off. On: the web UI in the HA sidebar counts as a paired device ("Home Assistant (ingress)"), so it needs no pairing code; Home Assistant has already logged you in. Only requests from HA's ingress proxy are trusted, the direct port 7913 still needs pairing |
 | `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page and in the pairing QR code for the app (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
 | `VISION_URL` | AI print-failure detection: address of [Kobra Vision](../kobra-vision/README.md). Empty = the Kobra Vision add-on if installed, otherwise AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
 | `VISION_TOKEN` | Only if `VISION_TOKEN` is also set in the Kobra Vision add-on |
@@ -84,7 +85,7 @@ Runtime settings (usage booking, auto-unassign on empty, ACE slot info, camera, 
 - **Ingress**: the web UI in the HA sidebar ("ACE Lanes").
 - **Direct**: host port `7913` (`http://<HA-IP>:7913`) for the Android app, the OrcaSlicer plugin and API access. Clear the host port in the add-on's Network section to disable it.
 
-Writes need a paired device. Pairing is per browser/app: on first start the add-on log prints a setup code, enter it in the web UI (ingress and direct are separate browser origins, so pair each once). There is no TLS, keep the port inside your home network.
+Writes need a paired device. Pairing is per browser/app: on first start the add-on log prints a setup code, enter it in the web UI (ingress and direct are separate browser origins, so pair each once). With `HA_INGRESS_TRUST: true` the HA sidebar needs no pairing. There is no TLS, keep the port inside your home network.
 
 Full upstream settings: [docs/configuration.md](https://github.com/xNoVoSx/kobra-spoolman/blob/main/docs/configuration.md).
 
@@ -95,5 +96,9 @@ All state (paired devices, settings, dryer rules, moisture and print history, jo
 ## Camera
 
 - For Mainsail/OrcaSlicer etc. use the links from the bridge's settings page: they point at the direct port (`:7913`) and carry the camera key, so they work without a HA login.
-- Camera in the HA sidebar (ingress) uses snapshots, see `INGRESS_CAMERA_SNAPSHOTS`. For a smooth stream open the direct port `http://<HA-IP>:7913` instead.
+- Camera in the HA sidebar (ingress) uses single images, see `INGRESS_CAMERA_SNAPSHOTS`. For a smooth stream open the direct port `http://<HA-IP>:7913` instead.
 - Rotate the camera key in the bridge (Settings → Camera) if a link was shared by accident.
+
+## Web UI under ingress
+
+Since upstream 3.13 the bridge's web UI works in the HA sidebar without patches (relative paths, camera as single images, camera links and the app's pairing QR code point at the direct port). The add-on only changes one detail: without `BRIDGE_PUBLIC_URL` that direct address always uses `http://`, also when Home Assistant is opened over `https://` (the bridge port has no TLS).
