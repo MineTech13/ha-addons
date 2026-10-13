@@ -88,3 +88,6 @@
 
 ## 3.14.0-1
 - `HA_INGRESS_TRUST` is now on by default: the web UI in the HA sidebar needs no pairing code. Only requests through Home Assistant's ingress proxy are trusted; the direct port 7913 still needs pairing. Existing installs keep the value they have saved.
+
+## 3.17.0-0
+- Upstream update to 3.17.0 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.17.0)).
