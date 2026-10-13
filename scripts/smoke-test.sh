@@ -32,7 +32,7 @@ case "$ADDON" in
         docker run -d --name "$NAME" -v "$OPTS:/data/options.json:ro" -p 17913:7913 "$TAG" >/dev/null
         wait_http http://127.0.0.1:17913/ 60 || fail "web UI not reachable"
         LOGS="$(docker logs "$NAME" 2>&1)"
-        grep -q 'Patched web UI for ingress' <<<"$LOGS" || fail "ingress UI patch did not apply (upstream layout changed)"
+        grep -q 'direct address uses http: patched' <<<"$LOGS" || fail "UI patch did not apply (upstream layout changed)"
         ;;
     kobra-vision)
         echo '{"THREADS":2,"UNLOAD_AFTER_S":600,"LOG_LEVEL":"INFO"}' > "$OPTS"

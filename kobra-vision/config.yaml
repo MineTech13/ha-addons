@@ -1,5 +1,5 @@
 name: Kobra Vision (AI failure detection)
-version: "3.12.0-0"
+version: "3.14.0-0"
 slug: kobra_vision
 stage: experimental
 description: "EXPERIMENTAL: AI print-failure detection (spaghetti) for the ACE Lane Bridge, using Obico's failure model on the CPU. Community project xNoVoSx/kobra-spoolman."

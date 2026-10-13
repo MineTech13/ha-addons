@@ -79,3 +79,9 @@
 
 ## 3.12.0-5
 - The pairing QR code ("Add device") opened under ingress now carries the direct address of the bridge (`http://<hostname you opened HA with>:7913`, or `BRIDGE_PUBLIC_URL` if set) instead of the Home Assistant address, which the app cannot pair with.
+
+## 3.14.0-0
+- Upstream update to 3.14.0 ([3.13.0](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.13.0), [3.14.0](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v3.14.0)): the web UI works under Home Assistant ingress on its own, and the Logs page has a "Report a bug" form with diagnostics.
+- Removed the add-on's own ingress patches, upstream covers them now: relative API paths, camera as single images under ingress, copyable camera links and the pairing QR code with the direct address, slot name opens the spool, printer logs and AI test image. `INGRESS_CAMERA_SNAPSHOTS` and `BRIDGE_PUBLIC_URL` keep working (passed to upstream's settings).
+- New option `HA_INGRESS_TRUST` (default off): the HA sidebar counts as a paired device and needs no pairing code.
+- Kept: without `BRIDGE_PUBLIC_URL` the direct address uses `http://` also when Home Assistant runs on `https://` (upstream would use `https://`, which the bridge port does not serve).

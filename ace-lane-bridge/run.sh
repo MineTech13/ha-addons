@@ -31,6 +31,9 @@ if [ ! -e "$DATA_DIR/.migrated-from-data" ]; then
     fi
     touch "$DATA_DIR/.migrated-from-data"
 fi
+# Option name from before upstream had its own setting (3.13): keep it, pass it on under upstream's name
+[ -z "${INGRESS_CAMERA_SNAPSHOTS:-}" ] || export CAMERA_INGRESS_SNAPSHOTS="$INGRESS_CAMERA_SNAPSHOTS"
+
 export HTTP_HOST=0.0.0.0
 export HTTP_PORT=7913
 [ -n "$TZ" ] || export TZ=UTC
@@ -60,19 +63,7 @@ if [ "${RUN_SPOOLMAN_SETUP:-false}" = "true" ]; then
     fi
 fi
 
-# Make API calls relative so the UI works under the HA ingress path
-# (2.5.0 had one inline index.html; 2.6+ has js/api.js - both contain fetch(path, ...))
-PATCHED=0
-while IFS= read -r -d '' f; do
-    if grep -qE 'fetch\(path, ' "$f"; then
-        sed -i -E 's#fetch\(path, #fetch(path.replace(/^[/]/, ""), #; s#href="/api/#href="api/#g' "$f"
-        echo "[INFO] Patched web UI for ingress: $f"
-        PATCHED=1
-    fi
-done < <(find /app -path '*static*' -type f \( -name '*.html' -o -name '*.js' \) -print0 2>/dev/null)
-[ "$PATCHED" = "1" ] || echo "[WARN] Could not patch the web UI - the ingress page may not work"
-
-# Optional UI patches (camera under ingress, copyable camera links); never fatal
+# Small UI fixes upstream does not cover (see patch-ui.py); never fatal
 python /patch-ui.py || echo "[WARN] UI patch script failed, continuing"
 
 cd /app
