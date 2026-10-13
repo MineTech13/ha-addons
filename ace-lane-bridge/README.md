@@ -46,7 +46,7 @@ The script is bundled in this add-on (same version as the bridge). To run it: se
 | `MOONRAKER_API_KEY` | Only if Moonraker requires one |
 | `DRY_RUN` | Log only, write nothing |
 | `INGRESS_CAMERA_SNAPSHOTS` | Default on. Under ingress the camera is loaded as single images one after the other instead of the MJPEG stream, which does not arrive reliably through the HA ingress / reverse proxy chain. Turn off to try the stream. The direct port 7913 always streams MJPEG (upstream setting `CAMERA_INGRESS_SNAPSHOTS`) |
-| `HA_INGRESS_TRUST` | Default off. On: the web UI in the HA sidebar counts as a paired device ("Home Assistant (ingress)"), so it needs no pairing code; Home Assistant has already logged you in. Only requests from HA's ingress proxy are trusted, the direct port 7913 still needs pairing |
+| `HA_INGRESS_TRUST` | Default on. The web UI in the HA sidebar counts as a paired device ("Home Assistant (ingress)"), so it needs no pairing code; Home Assistant has already logged you in. Only requests from HA's ingress proxy are trusted, the direct port 7913 still needs pairing. Everyone who can open the ACE Lanes panel in HA can then change settings in the bridge (by default only HA admins see the panel). Turn off to require pairing in the sidebar too |
 | `BRIDGE_PUBLIC_URL` | Base address used in the copyable camera links on the settings page and in the pairing QR code for the app (e.g. `http://192.168.1.10:7913`). Default under ingress: `http://<hostname you opened HA with>:7913` |
 | `VISION_URL` | AI print-failure detection: address of [Kobra Vision](../kobra-vision/README.md). Empty = the Kobra Vision add-on if installed, otherwise AI off. Everything else about the AI is set in the bridge's web UI (AI tab) |
 | `VISION_TOKEN` | Only if `VISION_TOKEN` is also set in the Kobra Vision add-on |
@@ -85,7 +85,7 @@ Runtime settings (usage booking, auto-unassign on empty, ACE slot info, camera, 
 - **Ingress**: the web UI in the HA sidebar ("ACE Lanes").
 - **Direct**: host port `7913` (`http://<HA-IP>:7913`) for the Android app, the OrcaSlicer plugin and API access. Clear the host port in the add-on's Network section to disable it.
 
-Writes need a paired device. Pairing is per browser/app: on first start the add-on log prints a setup code, enter it in the web UI (ingress and direct are separate browser origins, so pair each once). With `HA_INGRESS_TRUST: true` the HA sidebar needs no pairing. There is no TLS, keep the port inside your home network.
+Writes need a paired device. Pairing is per browser/app: on first start the add-on log prints a setup code, enter it in the web UI (ingress and direct are separate browser origins, so pair each once). The HA sidebar needs no pairing (`HA_INGRESS_TRUST`, on by default). There is no TLS, keep the port inside your home network.
 
 Full upstream settings: [docs/configuration.md](https://github.com/xNoVoSx/kobra-spoolman/blob/main/docs/configuration.md).
 
