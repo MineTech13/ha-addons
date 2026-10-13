@@ -85,3 +85,6 @@
 - Removed the add-on's own ingress patches, upstream covers them now: relative API paths, camera as single images under ingress, copyable camera links and the pairing QR code with the direct address, slot name opens the spool, printer logs and AI test image. `INGRESS_CAMERA_SNAPSHOTS` and `BRIDGE_PUBLIC_URL` keep working (passed to upstream's settings).
 - New option `HA_INGRESS_TRUST` (default off): the HA sidebar counts as a paired device and needs no pairing code.
 - Kept: without `BRIDGE_PUBLIC_URL` the direct address uses `http://` also when Home Assistant runs on `https://` (upstream would use `https://`, which the bridge port does not serve).
+
+## 3.14.0-1
+- `HA_INGRESS_TRUST` is now on by default: the web UI in the HA sidebar needs no pairing code. Only requests through Home Assistant's ingress proxy are trusted; the direct port 7913 still needs pairing. Existing installs keep the value they have saved.
