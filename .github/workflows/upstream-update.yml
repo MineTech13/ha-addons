@@ -73,7 +73,12 @@ jobs:
         if: steps.bump.outputs.changed == 'true' && steps.test.outcome != 'success'
         run: |
           ver="${{ steps.bump.outputs.version }}"
-          git push -f origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
+          # the PR branch may carry fixes pushed by hand: never overwrite it on a later run
+          if git ls-remote --exit-code origin "refs/heads/update/${{ matrix.addon }}-$ver" >/dev/null; then
+            echo "update/${{ matrix.addon }}-$ver already exists, left as is"
+            exit 0
+          fi
+          git push origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
           gh pr create --base main --head "update/${{ matrix.addon }}-$ver" \
             --title "Update ${{ matrix.addon }} to $ver (build/smoke test failed)" \
             --body "Automatic upstream update. The build or smoke test failed, so this was not merged. See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Upstream probably changed something the add-on's run.sh relies on." \
@@ -87,7 +92,12 @@ jobs:
         run: |
           ver="${{ steps.bump.outputs.version }}"
           repo="$(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="${{ matrix.addon }}" '$1 == a {print $2}')"
-          git push -f origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
+          # the PR branch may carry fixes pushed by hand: never overwrite it on a later run
+          if git ls-remote --exit-code origin "refs/heads/update/${{ matrix.addon }}-$ver" >/dev/null; then
+            echo "update/${{ matrix.addon }}-$ver already exists, left as is"
+            exit 0
+          fi
+          git push origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
           gh pr create --base main --head "update/${{ matrix.addon }}-$ver" \
             --title "Update ${{ matrix.addon }} to $ver" \
             --body "Automatic upstream update, build and smoke test passed. This add-on is set to manual review (scripts/upstreams.tsv): check the [release notes](https://github.com/$repo/releases/tag/v$ver) and merge to ship it. [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." \
