@@ -29,86 +29,151 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 1   # sequential: a job may push to main
+      max-parallel: 1   # sequential: a job may merge into main
       matrix:
         addon: ${{ fromJSON(needs.matrix.outputs.addons) }}
     env:
-      GH_TOKEN: ${{ github.token }}
+      # UPDATE_TOKEN (optional repo secret, fine-grained token of the repo owner): PRs are then opened and merged
+      # as that user, so their Lint runs start on their own and need no approval. Falls back to the workflow token.
+      GH_TOKEN: ${{ secrets.UPDATE_TOKEN || github.token }}
+      HAS_UPDATE_TOKEN: ${{ secrets.UPDATE_TOKEN != '' }}
+      ADDON: ${{ matrix.addon }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Bump to latest upstream release
         id: bump
         run: |
-          # update mode from scripts/upstreams.tsv: "merge" (default) or "pr"
-          mode="$(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="${{ matrix.addon }}" '$1 == a {print $4}')"
-          echo "mode=${mode:-merge}" >> "$GITHUB_OUTPUT"
-          scripts/bump-upstream.sh "${{ matrix.addon }}" | tee -a "$GITHUB_OUTPUT"
+          # auto_merge from scripts/upstreams.tsv: none | patch | minor | major ("all" = major), default none
+          policy="$(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="$ADDON" '$1 == a {print $4}')"
+          [ "$policy" = "all" ] && policy=major
+          echo "policy=${policy:-none}" >> "$GITHUB_OUTPUT"
+          scripts/bump-upstream.sh "$ADDON" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Skip versions whose PR was closed without merging
+        id: branch
+        if: steps.bump.outputs.changed == 'true'
+        run: |
+          branch="update/$ADDON-${{ steps.bump.outputs.version }}"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+          closed="$(gh pr list --head "$branch" --state closed --json state --jq '[.[] | select(.state == "CLOSED")] | length')"
+          if [ "$closed" != "0" ]; then
+            echo "::notice::$branch: a PR for this version was closed without merging, not reopening it"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build and smoke test
         id: test
-        if: steps.bump.outputs.changed == 'true'
+        if: steps.bump.outputs.changed == 'true' && steps.branch.outputs.skip != 'true'
         continue-on-error: true
-        run: scripts/smoke-test.sh "${{ matrix.addon }}"
+        run: scripts/smoke-test.sh "$ADDON"
 
-      - name: Commit
-        if: steps.bump.outputs.changed == 'true'
-        id: commit
+      # same checks as lint.yml, for this add-on: auto-merge waits for them
+      - name: Add-on linter
+        id: addon_lint
+        if: steps.bump.outputs.changed == 'true' && steps.branch.outputs.skip != 'true'
+        continue-on-error: true
+        uses: frenck/action-addon-linter@v2
+        with:
+          path: "./${{ matrix.addon }}"
+
+      - name: shellcheck
+        id: shellcheck
+        if: steps.bump.outputs.changed == 'true' && steps.branch.outputs.skip != 'true'
+        continue-on-error: true
+        run: shellcheck */run.sh scripts/*.sh
+
+      - name: hadolint
+        id: hadolint
+        if: steps.bump.outputs.changed == 'true' && steps.branch.outputs.skip != 'true'
+        continue-on-error: true
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          recursive: true
+          ignore: DL3008,DL3006,DL3007,DL3002,DL3066
+
+      - name: Open pull request
+        id: pr
+        if: steps.bump.outputs.changed == 'true' && steps.branch.outputs.skip != 'true'
         run: |
+          ver="${{ steps.bump.outputs.version }}"
+          prev="${{ steps.bump.outputs.previous }}"
+          level="${{ steps.bump.outputs.level }}"
+          policy="${{ steps.bump.outputs.policy }}"
+          branch="${{ steps.branch.outputs.name }}"
+          repo="$(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="$ADDON" '$1 == a {print $2}')"
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          checks_ok=true
+          for outcome in "${{ steps.test.outcome }}" "${{ steps.addon_lint.outcome }}" "${{ steps.shellcheck.outcome }}" "${{ steps.hadolint.outcome }}"; do
+            [ "$outcome" = "success" ] || checks_ok=false
+          done
+          echo "checks_ok=$checks_ok" >> "$GITHUB_OUTPUT"
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          ver="${{ steps.bump.outputs.version }}"
-          git checkout -b "update/${{ matrix.addon }}-$ver"
-          git add "${{ matrix.addon }}"
-          git commit -m "Update ${{ matrix.addon }} to $ver"
+          git checkout -b "$branch"
+          git add "$ADDON"
+          git commit -m "Update $ADDON to $ver"
 
-      - name: Tests passed - merge to main
-        if: steps.bump.outputs.changed == 'true' && steps.test.outcome == 'success' && steps.bump.outputs.mode != 'pr'
-        run: |
-          git fetch origin main
-          git rebase origin/main
-          git push origin "HEAD:main"
-
-      - name: Tests failed - open PR for review
-        if: steps.bump.outputs.changed == 'true' && steps.test.outcome != 'success'
-        run: |
-          ver="${{ steps.bump.outputs.version }}"
           # the PR branch may carry fixes pushed by hand: never overwrite it on a later run
-          if git ls-remote --exit-code origin "refs/heads/update/${{ matrix.addon }}-$ver" >/dev/null; then
-            echo "update/${{ matrix.addon }}-$ver already exists, left as is"
+          if git ls-remote --exit-code origin "refs/heads/$branch" >/dev/null; then
+            echo "$branch already exists, left as is (not auto-merged: what is on it was not tested by this run)"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
-            git push origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
+            git push origin "HEAD:refs/heads/$branch"
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+          # update level against the auto_merge policy
+          rank() { case "$1" in patch) echo 1 ;; minor) echo 2 ;; major) echo 3 ;; *) echo 0 ;; esac; }
+          if [ "$(rank "$level")" -le "$(rank "$policy")" ]; then allowed=true; else allowed=false; fi
+          echo "allowed=$allowed" >> "$GITHUB_OUTPUT"
+
+          if [ "$checks_ok" != "true" ]; then
+            title="Update $ADDON to $ver (checks failed)"
+            note="The build, smoke test or lint failed, so this is not merged automatically. Upstream probably changed something the add-on relies on."
+          elif [ "$allowed" = "true" ]; then
+            title="Update $ADDON to $ver"
+            note="All checks passed and auto_merge for this add-on is \`$policy\`, so this $level update is merged automatically."
+          else
+            title="Update $ADDON to $ver"
+            note="All checks passed. This is a **$level** update and auto_merge for this add-on is \`$policy\` (scripts/upstreams.tsv), so it waits for your review: merge it to ship."
+          fi
+          body="Automatic upstream update $prev → $ver ($level, [release notes](https://github.com/$repo/releases/tag/v$ver)).
+
+          $note
+
+          | Check | Result |
+          | --- | --- |
+          | Build and smoke test | ${{ steps.test.outcome }} |
+          | Add-on linter | ${{ steps.addon_lint.outcome }} |
+          | shellcheck | ${{ steps.shellcheck.outcome }} |
+          | hadolint | ${{ steps.hadolint.outcome }} |
+
+          [Workflow run]($run_url)"
+
           # open the PR unless one is already open (a failed create must fail the run, not pass silently)
-          if [ "$(gh pr list --head "update/${{ matrix.addon }}-$ver" --state open --json number --jq length)" = "0" ]; then
-            gh pr create --base main --head "update/${{ matrix.addon }}-$ver" \
-              --title "Update ${{ matrix.addon }} to $ver (build/smoke test failed)" \
-              --body "Automatic upstream update. The build or smoke test failed, so this was not merged. See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). Upstream probably changed something the add-on's run.sh relies on."
-            # a PR opened with the workflow token starts no pull_request runs: run Lint on the branch (checks show on the PR)
-            gh workflow run lint.yml --ref "update/${{ matrix.addon }}-$ver"
+          if [ "$(gh pr list --head "$branch" --state open --json number --jq length)" = "0" ]; then
+            gh pr create --base main --head "$branch" --title "$title" --body "$body"
+            # a PR opened with the workflow token starts no normal Lint run: start it on the branch (checks show on the PR)
+            if [ "$HAS_UPDATE_TOKEN" != "true" ]; then
+              gh workflow run lint.yml --ref "$branch"
+            fi
           else
-            echo "PR for update/${{ matrix.addon }}-$ver already open"
+            echo "PR for $branch already open"
           fi
+
+      - name: Auto-merge
+        if: steps.pr.outputs.checks_ok == 'true' && steps.pr.outputs.allowed == 'true' && steps.pr.outputs.pushed == 'true'
+        run: |
+          # merge exactly the commit this run tested, then delete the branch
+          # (detached, so gh only deletes the remote branch and leaves this checkout alone)
+          git checkout -q --detach
+          gh pr merge "${{ steps.branch.outputs.name }}" --squash --delete-branch --match-head-commit "$(git rev-parse HEAD)"
+
+      - name: Fail the run when checks failed
+        if: steps.pr.outputs.checks_ok == 'false'
+        run: |
+          echo "::error::$ADDON: build, smoke test or lint failed, PR left open for review"
           exit 1
-
-      - name: Tests passed - open PR for manual review
-        if: steps.bump.outputs.changed == 'true' && steps.test.outcome == 'success' && steps.bump.outputs.mode == 'pr'
-        run: |
-          ver="${{ steps.bump.outputs.version }}"
-          repo="$(grep -v '^#' scripts/upstreams.tsv | awk -F'\t' -v a="${{ matrix.addon }}" '$1 == a {print $2}')"
-          # the PR branch may carry fixes pushed by hand: never overwrite it on a later run
-          if git ls-remote --exit-code origin "refs/heads/update/${{ matrix.addon }}-$ver" >/dev/null; then
-            echo "update/${{ matrix.addon }}-$ver already exists, left as is"
-          else
-            git push origin "HEAD:refs/heads/update/${{ matrix.addon }}-$ver"
-          fi
-          # open the PR unless one is already open (a failed create must fail the run, not pass silently)
-          if [ "$(gh pr list --head "update/${{ matrix.addon }}-$ver" --state open --json number --jq length)" = "0" ]; then
-            gh pr create --base main --head "update/${{ matrix.addon }}-$ver" \
-              --title "Update ${{ matrix.addon }} to $ver" \
-              --body "Automatic upstream update, build and smoke test passed. This add-on is set to manual review (scripts/upstreams.tsv): check the [release notes](https://github.com/$repo/releases/tag/v$ver) and merge to ship it. [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
-            # a PR opened with the workflow token starts no pull_request runs: run Lint on the branch (checks show on the PR)
-            gh workflow run lint.yml --ref "update/${{ matrix.addon }}-$ver"
-          else
-            echo "PR for update/${{ matrix.addon }}-$ver already open"
-          fi

@@ -24,8 +24,20 @@ All apps are thin wrappers around the upstream container images, pulled straight
 
 1. looks up the latest upstream release and checks that the container image for it is published,
 2. bumps `ARG UPSTREAM_VERSION` in the `Dockerfile`, `version` in `config.yaml` (as `<upstream>-0`) and the `CHANGELOG.md`,
-3. builds the app and runs a smoke test (`scripts/smoke-test.sh`),
-4. update mode `merge` (4th column of `upstreams.tsv`): pushes to `main` if the test passes, otherwise opens a pull request for manual review. Update mode `pr`: always opens a pull request, so nothing ships before you merge it (used for the ACE Lane Bridge).
+3. builds the app and runs a smoke test (`scripts/smoke-test.sh`) plus the lint checks,
+4. always opens a pull request `update/<app>-<version>`,
+5. merges that pull request itself when all checks passed and the update level (patch, minor or major, from the version numbers) is allowed by the app's `auto_merge` column (4th column of `upstreams.tsv`):
+
+   | `auto_merge` | merged automatically |
+   | --- | --- |
+   | `none` | nothing, every update waits for your review |
+   | `patch` | `1.2.3 → 1.2.4` |
+   | `minor` | patch and `1.2.3 → 1.3.0` |
+   | `major` (or `all`) | everything, including `1.2.3 → 2.0.0` |
+
+   Everything else stays open for you to review and merge. If you close an update PR without merging, that version is not offered again; the next release is.
+
+The branch of a merged or closed pull request is deleted automatically (`.github/workflows/delete-branch.yml`). Optional repo secret `UPDATE_TOKEN` (a fine-grained token of the repo owner with Contents and Pull requests read/write on this repo): update PRs are then opened as you, so their checks start normally without needing approval.
 
 Home Assistant offers the update once it is on `main`. To pin an app to a version, remove its line from `upstreams.tsv`.
 
