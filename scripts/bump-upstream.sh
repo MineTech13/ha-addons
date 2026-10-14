@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bump an add-on to the latest upstream release.
 # Usage: scripts/bump-upstream.sh <addon-dir>
-# Prints "changed=true|false" and "version=<x>" (GITHUB_OUTPUT compatible) on stdout.
+# Prints "changed=true|false", "version=<x>", "previous=<old>" and "level=major|minor|patch"
+# (GITHUB_OUTPUT compatible) on stdout.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -54,6 +55,16 @@ sed -i "s/^version: .*/version: \"$latest-0\"/" "$CONFIG"
 printf '\n## %s-0\n- Upstream update to %s ([release notes](https://github.com/%s/releases/tag/v%s)).\n' \
     "$latest" "$latest" "$REPO" "$latest" >> "$CHANGELOG"
 
-echo "$ADDON: $current -> $latest" >&2
+# update level: first of major.minor.patch that changed (anything after the 3rd part counts as patch)
+IFS=. read -r cur_major cur_minor _ <<< "$current"
+IFS=. read -r new_major new_minor _ <<< "$latest"
+if [ "$new_major" != "$cur_major" ]; then level="major"
+elif [ "$new_minor" != "$cur_minor" ]; then level="minor"
+else level="patch"
+fi
+
+echo "$ADDON: $current -> $latest ($level)" >&2
 echo "changed=true"
 echo "version=$latest"
+echo "previous=$current"
+echo "level=$level"

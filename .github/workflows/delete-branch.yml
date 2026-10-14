@@ -1,0 +1,29 @@
+name: Delete branch of closed PR
+
+# Removes the head branch when a pull request is merged or closed.
+# PRs the update workflow merges itself delete their branch there (a workflow-token merge starts no workflows).
+on:
+  pull_request_target:   # base-repo context: runs for bot PRs too, without approval; no PR code is checked out
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  delete:
+    # only branches of this repo, never the default branch
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref != github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - run: |
+          if gh api --method DELETE "repos/${{ github.repository }}/git/refs/heads/$BRANCH" 2>err.txt; then
+            echo "deleted $BRANCH"
+          elif grep -q -e "Reference does not exist" -e "HTTP 404" -e "HTTP 422" err.txt; then
+            echo "$BRANCH is already gone"
+          else
+            cat err.txt >&2
+            exit 1
+          fi
