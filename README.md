@@ -37,7 +37,7 @@ All apps are thin wrappers around the upstream container images, pulled straight
 
    Everything else stays open for you to review and merge. If you close an update PR without merging, that version is not offered again; the next release is.
 
-The branch of a merged or closed pull request is deleted automatically (`.github/workflows/delete-branch.yml`). Optional repo secret `UPDATE_TOKEN` (a fine-grained token of the repo owner with Contents and Pull requests read/write on this repo): update PRs are then opened as you, so their checks start normally. Without it, the workflow runs Lint on the PR itself and deletes the duplicate run GitHub holds for approval.
+The branch of a merged or closed pull request is deleted automatically (`.github/workflows/delete-branch.yml`). Lint runs on every branch push (and is started by the update workflow on its own branches), not on `pull_request`, so update PRs opened by the bot need no workflow approval. Optional repo secret `UPDATE_TOKEN` (a fine-grained token of the repo owner with Contents and Pull requests read/write on this repo): update PRs are then opened and merged as you instead of the bot.
 
 Home Assistant offers the update once it is on `main`. To pin an app to a version, remove its line from `upstreams.tsv`.
 

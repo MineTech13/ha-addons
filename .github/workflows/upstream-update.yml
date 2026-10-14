@@ -34,9 +34,8 @@ jobs:
         addon: ${{ fromJSON(needs.matrix.outputs.addons) }}
     env:
       # UPDATE_TOKEN (optional repo secret, fine-grained token of the repo owner): PRs are then opened and merged
-      # as that user, so their Lint runs start on their own and need no approval. Falls back to the workflow token.
+      # as that user. Falls back to the workflow token.
       GH_TOKEN: ${{ secrets.UPDATE_TOKEN || github.token }}
-      HAS_UPDATE_TOKEN: ${{ secrets.UPDATE_TOKEN != '' }}
       ADDON: ${{ matrix.addon }}
     steps:
       - uses: actions/checkout@v4
@@ -156,20 +155,8 @@ jobs:
           # open the PR unless one is already open (a failed create must fail the run, not pass silently)
           if [ "$(gh pr list --head "$branch" --state open --json number --jq length)" = "0" ]; then
             gh pr create --base main --head "$branch" --title "$title" --body "$body"
-            # a PR opened with the workflow token starts no normal Lint run: start it on the branch (checks show on the PR)
-            if [ "$HAS_UPDATE_TOKEN" != "true" ]; then
-              gh workflow run lint.yml --ref "$branch"
-              # GitHub also starts a pull_request Lint run for the bot's PR and holds it for approval:
-              # it duplicates the run above, so delete it once it shows up
-              for _ in $(seq 1 12); do
-                sleep 5
-                ids="$(gh api "repos/${{ github.repository }}/actions/runs?branch=$branch&event=pull_request&status=action_required" --jq '.workflow_runs[].id')"
-                if [ -n "$ids" ]; then
-                  for id in $ids; do gh api --method DELETE "repos/${{ github.repository }}/actions/runs/$id" && echo "deleted duplicate run $id"; done
-                  break
-                fi
-              done
-            fi
+            # a push made with the workflow token starts no Lint run: start it on the branch (checks show on the PR)
+            gh workflow run lint.yml --ref "$branch"
           else
             echo "PR for $branch already open"
           fi

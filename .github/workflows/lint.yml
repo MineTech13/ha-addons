@@ -1,10 +1,11 @@
 name: Lint
 
+# Runs on every branch push instead of pull_request: the checks still show on PRs, and PRs opened by
+# the update workflow get no pull_request run that GitHub would hold for approval. (PRs from forks are not linted.)
 on:
   push:
-    branches: [main]
-  pull_request:
-  # started by upstream-update.yml for its own PRs (PRs opened with the workflow token trigger no pull_request runs)
+    branches: ["**"]
+  # started by upstream-update.yml for its update branches (pushes made with the workflow token start no runs)
   workflow_dispatch:
 
 jobs:
