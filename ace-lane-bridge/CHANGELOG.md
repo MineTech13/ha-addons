@@ -100,3 +100,6 @@
 
 ## 4.0.1-0
 - Upstream update to 4.0.1 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v4.0.1)).
+
+## 4.0.2-0
+- Upstream update to 4.0.2 ([release notes](https://github.com/xNoVoSx/kobra-spoolman/releases/tag/v4.0.2)).
