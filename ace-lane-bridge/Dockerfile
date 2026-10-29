@@ -1,4 +1,4 @@
-ARG UPSTREAM_VERSION=4.6.1
+ARG UPSTREAM_VERSION=4.6.2
 FROM ghcr.io/xnovosx/ace-lane-bridge:${UPSTREAM_VERSION}
 
 # Re-declare: ARGs set before FROM are not visible after it
