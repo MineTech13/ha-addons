@@ -1,5 +1,5 @@
 name: Spoolman (Ingress + Direct API)
-version: "0.27.0-3"
+version: "0.27.1-0"
 slug: spoolman_hybrid
 description: "Spoolman with HA Ingress for remote management and a direct port for API access (e.g. OctoEverywhere)."
 arch:
